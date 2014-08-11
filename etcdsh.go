@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"os"
 
 	"github.com/coreos/go-etcd/etcd"
@@ -10,8 +12,21 @@ import (
 
 // Main method.
 func main() {
-	machines := []string{"http://127.0.0.1:4001"}
-	client := etcd.NewClient(machines)
+	help := flag.Bool("help", false, "Show command line options and exit.")
+	machines := flag.String("machines", "http://127.0.0.1:4001", "Set the etcd machine to connect to.")
+	version := flag.Bool("version", false, "Show the version and exit.")
+	flag.Parse()
+
+	if *help {
+		showHelp()
+		os.Exit(0)
+	}
+	if *version {
+		fmt.Printf("etcdsh %s - An interactive shell for the etcd server.\n\n", handlers.Version)
+		os.Exit(0)
+	}
+
+	client := etcd.NewClient([]string{*machines})
 	//client.Set("/go/etcdsh", "You caught me!", 0)
 
 	controller := handlers.NewController(client, io.Stdout, io.Stderr, io.Stdin)
@@ -24,4 +39,9 @@ func main() {
 	code := controller.Start()
 
 	os.Exit(code)
+}
+
+// showHelp displays the flag defaults. Later on this should be change to make the output a little more pretty.
+func showHelp() {
+	flag.PrintDefaults()
 }
