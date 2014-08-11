@@ -8,17 +8,20 @@ import (
 
 const (
 	DefaultMachine = "http://127.0.0.1:4001"
+	DefaultColors  = false
 )
 
 // Represents configuration file values.
 type Config struct {
 	Machine string
+	Colors  bool
 }
 
 // Creates a new Config instance.
 func New() *Config {
 	c := new(Config)
 	c.Machine = DefaultMachine
+	c.Colors = DefaultColors
 
 	usr, err := user.Current()
 	if err == nil {

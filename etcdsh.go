@@ -18,6 +18,7 @@ func main() {
 	help := flag.Bool("help", false, "Prints command line options and exit.")
 	version := flag.Bool("version", false, "Prints the etcdsh version and exit.")
 	flag.StringVar(&config.Machine, "machine", config.Machine, "Connect to this etcd server.")
+	flag.BoolVar(&config.Colors, "colors", config.Colors, "Use colors in display.")
 	flag.Parse()
 
 	if *help {

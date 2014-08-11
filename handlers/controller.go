@@ -79,6 +79,11 @@ func (c *Controller) Client() *etcd.Client {
 	return c.client
 }
 
+// Config returns the app configuration.
+func (c *Controller) Config() *config.Config {
+	return c.config
+}
+
 // Add appends a handler to the map.
 func (c *Controller) Add(h Handler) {
 	c.handlers[h.Command()] = h

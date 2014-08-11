@@ -3,8 +3,11 @@ package handlers
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"path"
+	"runtime"
 	"strconv"
+	"strings"
 
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/headzoo/etcdsh/io"
@@ -25,15 +28,24 @@ type ColumnWidths struct {
 	TTL           int
 }
 
+// The color codes to use when outputing.
+type OutputColors struct {
+	Key    string
+	Object string
+}
+
 // LsHandler handles the "ls" command.
 type LsHandler struct {
 	controller *Controller
+	colors     OutputColors
+	use_colors bool
 }
 
 // NewLsHandler creates a new LsHandler instance.
 func NewLsHandler(controller *Controller) *LsHandler {
 	h := new(LsHandler)
 	h.controller = controller
+	h.setupColors()
 
 	return h
 }
@@ -66,12 +78,12 @@ func (h *LsHandler) Handle(i *io.Input) (string, error) {
 		return "", err
 	}
 
-	//return respToShortOutput(resp), nil
-	return respToLongOutput(resp), nil
+	//return h.respToShortOutput(resp), nil
+	return h.respToLongOutput(resp), nil
 }
 
 // respToLongOuput formats an etcd response for output in the long format.
-func respToLongOutput(resp *etcd.Response) string {
+func (h *LsHandler) respToLongOutput(resp *etcd.Response) string {
 	output := bytes.NewBufferString("")
 	widths := columnWidths(resp.Node)
 	node := etcd.Node{
@@ -80,16 +92,16 @@ func respToLongOutput(resp *etcd.Response) string {
 		CreatedIndex:  0,
 		ModifiedIndex: 0,
 	}
-	output.WriteString(formatNode(&node, widths))
+	output.WriteString(h.formatNode(&node, widths))
 	node.Key = ".."
-	output.WriteString(formatNode(&node, widths))
+	output.WriteString(h.formatNode(&node, widths))
 
 	total := 2
 	for _, node := range resp.Node.Nodes {
-		output.WriteString(formatNode(node, widths))
+		output.WriteString(h.formatNode(node, widths))
 		total++
 		for _, n := range node.Nodes {
-			output.WriteString(formatNode(n, widths))
+			output.WriteString(h.formatNode(n, widths))
 			total++
 		}
 	}
@@ -98,7 +110,7 @@ func respToLongOutput(resp *etcd.Response) string {
 }
 
 // respToShortOutput formats an etcd response for output in the short format.
-func respToShortOutput(resp *etcd.Response) string {
+func (h *LsHandler) respToShortOutput(resp *etcd.Response) string {
 	output := bytes.NewBufferString("")
 	for _, node := range resp.Node.Nodes {
 		output.WriteString(path.Base(node.Key))
@@ -115,14 +127,25 @@ func respToShortOutput(resp *etcd.Response) string {
 }
 
 // formatNode formats the node as a string for output to the console.
-func formatNode(n *etcd.Node, w ColumnWidths) string {
+func (h *LsHandler) formatNode(n *etcd.Node, w ColumnWidths) string {
 	typeValue := typeKey
 	if !n.Dir {
 		typeValue = typeObject
 	}
 
+	prefix := ""
+	postfix := ""
+	if h.use_colors {
+		if n.Dir {
+			prefix = "\x1b[" + h.colors.Key + ";1m"
+		} else {
+			prefix = "\x1b[" + h.colors.Object + ";1m"
+		}
+		postfix = "\x1b[0m"
+	}
+
 	return fmt.Sprintf(
-		"%*d %*d %*d %s: %s\n",
+		"%*d %*d %*d %s: %s%s%s\n",
 		w.CreatedIndex,
 		n.CreatedIndex,
 		w.ModifiedIndex,
@@ -130,8 +153,48 @@ func formatNode(n *etcd.Node, w ColumnWidths) string {
 		w.TTL,
 		n.TTL,
 		typeValue,
+		prefix,
 		path.Base(n.Key),
+		postfix,
 	)
+}
+
+// setupColors sets the value of LsHandler.colors.
+func (h *LsHandler) setupColors() {
+	h.colors = OutputColors{}
+	h.use_colors = false
+
+	if h.controller.Config().Colors && runtime.GOOS == "linux" {
+		h.colors = OutputColors{
+			Key:    "34",
+			Object: "0",
+		}
+		h.use_colors = true
+
+		ls_colors := os.Getenv("LS_COLORS")
+		if ls_colors != "" {
+			colors := strings.Split(ls_colors, ":")
+			for _, color := range colors {
+				if strings.HasPrefix(color, "di=") {
+					p := strings.Split(color, "=")
+					if len(p) > 1 {
+						p = strings.Split(p[1], ";")
+						if len(p) > 1 {
+							h.colors.Key = p[1]
+						}
+					}
+				} else if strings.HasPrefix(color, "fi=") {
+					p := strings.Split(color, "=")
+					if len(p) > 1 {
+						p = strings.Split(p[1], ";")
+						if len(p) > 1 {
+							h.colors.Object = p[1]
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 // columnWidths returns the widths for each column in the "ls" output.
