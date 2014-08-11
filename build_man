@@ -1,0 +1,2 @@
+#!/bin/bash
+md2man-roff man.md > etcdsh.1 && man ./etcdsh.1
