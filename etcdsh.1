@@ -1,0 +1,58 @@
+.TH ETCDSH 0.2 "AUGUST 2014" "etcd man page"
+.SH NAME
+.PP
+etcd
+.SH SYNOPSIS
+.PP
+etcd [\fB\fChelp\fR]
+.SH OPTIONS
+.PP
+\fB\fChelp\fR Display the help page and exit.
+.SH COMMANDS
+.PP
+The following commands are available from within the shell.
+.PP
+\fB\fCls\fR \- Lists the contents of the working directory. The output contains 5 columns: CreatedIndex, ModifiedIndex, TTL, Type, Name. For example:
+.PP
+total 4
+.br
+ 0  0   0 k .
+.br
+ 0  0   0 k ..
+.br
+12 12 300 k domains
+.br
+34 34   0 o version
+.PP
+Using the "domains" row, the first column is the created index (12). The second is the modified index (12). The third column is the TTL (300). The fourth column is either "k" or "o" (k). A "k" means the value in the fifth column is a key, and "o" means it's an object. The fifth column is the name of the key or object (domains).
+.PP
+Examples:
+ ls
+ ls /
+ ls domains
+ ls ..
+.PP
+\fB\fCcd\fR \- Change the working directory.
+.PP
+Examples:
+ cd /
+ cd /domains
+ cd ..
+ cd ../..
+ cd /domains/apps
+.PP
+\fB\fCget\fR \- Displays the value of an object.
+.PP
+Examples:
+ get /domains/apps
+ get /versions/1.0
+.PP
+\fB\fCset\fR \- Sets the value of an object.
+.PP
+Examples:
+ set /version/app 1.0
+ set /domains/apps/mobile mobile.xdt.io
+.SH AUTHOR
+.PP
+Sean Hickey (
+\[la]sean@headzoo.io\[ra])
