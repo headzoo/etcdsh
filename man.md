@@ -7,11 +7,16 @@ etcd
 
 SYNOPSIS
 --------
-etcd [`help`]
+etcd [OPTIONS]
 
 OPTIONS
 -------
-`help` Display the help page and exit.
+`-help` Display help page for the command line options and exit.
+
+`-version` Display the etcdsh version and exit.
+
+`-machines` Sets the etcd machines to connect to. Defaults to "http://127.0.0.1:4001".
+
 
 COMMANDS
 --------
