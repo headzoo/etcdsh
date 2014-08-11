@@ -1,6 +1,40 @@
 etcdsh
 ======
-An interactive shell for the etcd server.
+A command line application that provides an interactive shell for the etcd server.
+
+Using etcdsh you can browse your etcd "filesystem" like an ordinary filesystem, using familar commands line "cd" and "ls". For example:
+
+
+```
+Connecting to http://127.0.0.1:4001
+Interactive etcd shell started.
+Type 'help' for a list of commands.
+Type 'q' to quit.
+
+joe@etcd:/$ ls
+total 4
+0  0  0  k .
+0  0  0  k ..
+3  3  0  k go
+1  1  0  k apps
+
+joe@etcd:/$ cd apps
+joe@etcd:/apps$ ls
+total 4
+0  0  0  k .
+0  0  0  k ..
+6  6  0  o mobile
+5  5  0  o website
+
+joe@etcd:/apps$ get website
+http://example.com
+
+joe@etcd:/apps$ set website http://example.net
+http://example.net
+
+joe@etcd:/apps cd ..
+joe@etcd:/$ q
+```
 
 
 ### Installation
