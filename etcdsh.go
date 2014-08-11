@@ -6,15 +6,18 @@ import (
 	"os"
 
 	"github.com/coreos/go-etcd/etcd"
+	"github.com/headzoo/etcdsh/config"
 	"github.com/headzoo/etcdsh/handlers"
 	"github.com/headzoo/etcdsh/io"
 )
 
 // Main method.
 func main() {
+	config := config.New()
+
 	help := flag.Bool("help", false, "Prints command line options and exit.")
-	machine := flag.String("machine", "http://127.0.0.1:4001", "Connect to this etcd server. Defaults to 'http://127.0.0.1:4001'.")
 	version := flag.Bool("version", false, "Prints the etcdsh version and exit.")
+	flag.StringVar(&config.Machine, "machine", config.Machine, "Connect to this etcd server.")
 	flag.Parse()
 
 	if *help {
@@ -26,8 +29,10 @@ func main() {
 		os.Exit(0)
 	}
 
-	client := etcd.NewClient([]string{*machine})
-	controller := handlers.NewController(client, io.Stdout, io.Stderr, io.Stdin)
+	fmt.Printf("Connecting to %s\n", config.Machine)
+	client := etcd.NewClient([]string{config.Machine})
+
+	controller := handlers.NewController(config, client, io.Stdout, io.Stderr, io.Stdin)
 	controller.Add(handlers.NewLsHandler(controller))
 	controller.Add(handlers.NewSetHandler(controller))
 	controller.Add(handlers.NewExitHandler(controller))

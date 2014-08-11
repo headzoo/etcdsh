@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/coreos/go-etcd/etcd"
+	"github.com/headzoo/etcdsh/config"
 	"github.com/headzoo/etcdsh/io"
 )
 
@@ -32,16 +33,18 @@ type Handler interface {
 type Controller struct {
 	handlers              HandlerMap
 	scanner               *bufio.Scanner
+	config                *config.Config
 	client                *etcd.Client
 	stdout, stderr, stdin *os.File
 	wdir                  string
 }
 
 // Create a new Controller.
-func NewController(client *etcd.Client, stdout, stderr, stdin *os.File) *Controller {
+func NewController(config *config.Config, client *etcd.Client, stdout, stderr, stdin *os.File) *Controller {
 	c := new(Controller)
 	c.handlers = make(HandlerMap)
 	c.scanner = bufio.NewScanner(stdin)
+	c.config = config
 	c.client = client
 	c.stdout, c.stderr, c.stdin = stdout, stderr, stdin
 	c.wdir = "/"
