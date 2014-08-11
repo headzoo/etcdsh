@@ -45,6 +45,7 @@ With Go installed clone the repo and install using `go install`.
 ```
 git clone git@github.com:headzoo/etcdsh.git
 cd etcdsh
+go get
 go install
 ```
 
