@@ -20,7 +20,7 @@ OPTIONS
 
 COMMANDS
 --------
-The following commands are available from within the shell.
+Type help from the shell prompt to view a list of commands. The following commands are available from within the shell.
 
 `ls` - Lists the contents of the working directory. The output contains 5 columns: CreatedIndex, ModifiedIndex, TTL, Type, Name. For example:
 
