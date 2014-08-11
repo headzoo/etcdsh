@@ -3,13 +3,12 @@ package handlers
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"path"
 	"runtime"
 	"strconv"
-	"strings"
 
 	"github.com/coreos/go-etcd/etcd"
+	"github.com/headzoo/etcdsh/env"
 	"github.com/headzoo/etcdsh/io"
 )
 
@@ -165,35 +164,14 @@ func (h *LsHandler) setupColors() {
 	h.use_colors = false
 
 	if h.controller.Config().Colors && runtime.GOOS == "linux" {
+		envColors := env.NewColors()
+		di, _ := envColors.GetLSDefault("di", "34")
+		fi, _ := envColors.GetLSDefault("fi", "0")
 		h.colors = OutputColors{
-			Key:    "34",
-			Object: "0",
+			Key:    di,
+			Object: fi,
 		}
 		h.use_colors = true
-
-		ls_colors := os.Getenv("LS_COLORS")
-		if ls_colors != "" {
-			colors := strings.Split(ls_colors, ":")
-			for _, color := range colors {
-				if strings.HasPrefix(color, "di=") {
-					p := strings.Split(color, "=")
-					if len(p) > 1 {
-						p = strings.Split(p[1], ";")
-						if len(p) > 1 {
-							h.colors.Key = p[1]
-						}
-					}
-				} else if strings.HasPrefix(color, "fi=") {
-					p := strings.Split(color, "=")
-					if len(p) > 1 {
-						p = strings.Split(p[1], ";")
-						if len(p) > 1 {
-							h.colors.Object = p[1]
-						}
-					}
-				}
-			}
-		}
 	}
 }
 
