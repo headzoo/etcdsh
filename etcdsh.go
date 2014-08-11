@@ -13,7 +13,7 @@ import (
 // Main method.
 func main() {
 	help := flag.Bool("help", false, "Prints command line options and exit.")
-	machines := flag.String("machines", "http://127.0.0.1:4001", "Connect to these etcd servers. Defaults to 'http://127.0.0.1:4001'.")
+	machine := flag.String("machine", "http://127.0.0.1:4001", "Connect to this etcd server. Defaults to 'http://127.0.0.1:4001'.")
 	version := flag.Bool("version", false, "Prints the etcdsh version and exit.")
 	flag.Parse()
 
@@ -26,7 +26,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	client := etcd.NewClient([]string{*machines})
+	client := etcd.NewClient([]string{*machine})
 	controller := handlers.NewController(client, io.Stdout, io.Stderr, io.Stdin)
 	controller.Add(handlers.NewLsHandler(controller))
 	controller.Add(handlers.NewSetHandler(controller))
@@ -42,9 +42,20 @@ func main() {
 // printHelp prints the command line help information.
 func printHelp() {
 	printVersion()
+	fmt.Println("USAGE:")
+	fmt.Println("\tetcdsh [OPTIONS]")
+
+	fmt.Println("")
+	fmt.Println("OPTIONS:")
 	flag.VisitAll(func(f *flag.Flag) {
-		fmt.Printf("-%-10s%s\n", f.Name, f.Usage)
+		fmt.Printf("\t-%-10s%s\n", f.Name, f.Usage)
 	})
+
+	fmt.Println("")
+	fmt.Println("EXAMPLES:")
+	fmt.Println("\tetcdsh -machine='http://192.168.1.23:4001'")
+
+	fmt.Println("")
 }
 
 // printVersion prints the app version information.
