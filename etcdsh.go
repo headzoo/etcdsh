@@ -8,7 +8,6 @@ import (
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/headzoo/etcdsh/config"
 	"github.com/headzoo/etcdsh/handlers"
-	"github.com/headzoo/etcdsh/io"
 )
 
 // Main method.
@@ -33,7 +32,7 @@ func main() {
 	fmt.Printf("Connecting to %s\n", config.Machine)
 	client := etcd.NewClient([]string{config.Machine})
 
-	controller := handlers.NewController(config, client, io.Stdout, io.Stderr, io.Stdin)
+	controller := handlers.NewController(config, client, os.Stdout, os.Stderr, os.Stdin)
 	controller.Add(handlers.NewLsHandler(controller))
 	controller.Add(handlers.NewSetHandler(controller))
 	controller.Add(handlers.NewExitHandler(controller))
