@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bytes"
 	"fmt"
 	"path"
 	"strconv"
@@ -65,6 +66,13 @@ func (h *LsHandler) Handle(i *io.Input) (string, error) {
 		return "", err
 	}
 
+	//return respToShortOutput(resp), nil
+	return respToLongOutput(resp), nil
+}
+
+// respToLongOuput formats an etcd response for output in the long format.
+func respToLongOutput(resp *etcd.Response) string {
+	output := bytes.NewBufferString("")
 	widths := columnWidths(resp.Node)
 	node := etcd.Node{
 		Dir:           true,
@@ -72,21 +80,38 @@ func (h *LsHandler) Handle(i *io.Input) (string, error) {
 		CreatedIndex:  0,
 		ModifiedIndex: 0,
 	}
-	output := formatNode(&node, widths)
+	output.WriteString(formatNode(&node, widths))
 	node.Key = ".."
-	output += formatNode(&node, widths)
+	output.WriteString(formatNode(&node, widths))
 
 	total := 2
 	for _, node := range resp.Node.Nodes {
-		output += formatNode(node, widths)
+		output.WriteString(formatNode(node, widths))
 		total++
 		for _, n := range node.Nodes {
-			output += formatNode(n, widths)
+			output.WriteString(formatNode(n, widths))
 			total++
 		}
 	}
 
-	return fmt.Sprintf("total %d\n%s", total, output), nil
+	return fmt.Sprintf("total %d\n%s", total, output.String())
+}
+
+// respToShortOutput formats an etcd response for output in the short format.
+func respToShortOutput(resp *etcd.Response) string {
+	output := bytes.NewBufferString("")
+	for _, node := range resp.Node.Nodes {
+		output.WriteString(path.Base(node.Key))
+		output.WriteString(" ")
+
+		for _, n := range node.Nodes {
+			output.WriteString(path.Base(n.Key))
+			output.WriteString(" ")
+		}
+	}
+
+	output.WriteString("\n")
+	return output.String()
 }
 
 // formatNode formats the node as a string for output to the console.
