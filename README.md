@@ -13,18 +13,18 @@ Type 'q' to quit.
 
 joe@etcd:/$ ls
 total 4
-0  0    0  k: .
-0  0    0  k: ..
-3  3  300  k: go
-1  1    0  k: apps
+0 0   0  k: .
+0 0   0  k: ..
+3 3 300  k: go
+1 1   0  k: apps
 
 joe@etcd:/$ cd apps
 joe@etcd:/apps$ ls
 total 4
- 0   0  0  k: .
- 0   0  0  k: ..
- 6   6  0  o: mobile
-15  15  0  o: website
+ 0  0 0  k: .
+ 0  0 0  k: ..
+ 6  6 0  o: mobile
+15 15 0  o: website
 
 joe@etcd:/apps$ get website
 http://example.com
