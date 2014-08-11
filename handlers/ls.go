@@ -14,10 +14,16 @@ import (
 
 const (
 	// Represents a node is a directory in the output.
-	typeKey = "k"
+	SymbolTypeKeys = "k"
 
 	// Represents a node is a file in the output.
-	typeObject = "o"
+	SymbolTypeObjects = "o"
+
+	// Default color for keys.
+	DefaultColorKeys = "34"
+
+	// Default color for objects.
+	DefaultColorObjects = "0"
 )
 
 // Column widths to use for the "ls" output.
@@ -127,9 +133,9 @@ func (h *LsHandler) respToShortOutput(resp *etcd.Response) string {
 
 // formatNode formats the node as a string for output to the console.
 func (h *LsHandler) formatNode(n *etcd.Node, w ColumnWidths) string {
-	typeValue := typeKey
+	typeValue := SymbolTypeKeys
 	if !n.Dir {
-		typeValue = typeObject
+		typeValue = SymbolTypeObjects
 	}
 
 	prefix := ""
@@ -165,8 +171,8 @@ func (h *LsHandler) setupColors() {
 
 	if h.controller.Config().Colors && runtime.GOOS == "linux" {
 		envColors := env.NewColors()
-		di, _ := envColors.GetLSDefault("di", "34")
-		fi, _ := envColors.GetLSDefault("fi", "0")
+		di, _ := envColors.GetLSDefault("di", DefaultColorKeys)
+		fi, _ := envColors.GetLSDefault("fi", DefaultColorObjects)
 		h.colors = OutputColors{
 			Key:    di,
 			Object: fi,
