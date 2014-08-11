@@ -53,15 +53,20 @@ Use `etcdsh -help` for a list of command line arguments. Once in the shell type 
 
 
 ### Configuration
-Default configuration values are stored in `$HOME/.etcdsh`, which may contain the following values.
+Default configuration values are stored in `$HOME/.etcdsh`, although command line values override the values from `.etcdsh`.
+
+An example configuration.
 
 ```
 {
-  "machine": "http://127.0.0.1:4001"
+  "machine": "http://127.0.0.1:4001",
+  "colors": true
 }
 ```
 
-Command line values override the values from `.etcdsh`.
+* "machine" The etcd server to connect to.
+* "colors" Whether to use colors in output. Only applicable to Linux. The [LS_COLORS](http://blog.twistedcode.org/2008/04/lscolors-explained.html) environment variable is used to determine which colors to use.
+
 
 ### Bugs
 This was the first app I've written using [Go](http://golang.org/), as well as being the first app I've written using [vim](http://www.vim.org/). The code is probably sloppy, and breaks some Go conventions. Use the [issue system](https://github.com/headzoo/etcdsh/issues) to report bugs and broken conventions.
