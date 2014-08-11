@@ -27,30 +27,43 @@ total 4
 Using the "domains" row, the first column is the created index (12). The second is the modified index (12). The third column is the TTL (300). The fourth column is either "k" or "o" (k). A "k" means the value in the fifth column is a key, and "o" means it's an object. The fifth column is the name of the key or object (domains).
 .PP
 Examples:
+.br
  ls
+.br
  ls /
+.br
  ls domains
+.br
  ls ..
 .PP
 \fB\fCcd\fR \- Change the working directory.
 .PP
 Examples:
+.br
  cd /
+.br
  cd /domains
+.br
  cd ..
+.br
  cd ../..
+.br
  cd /domains/apps
 .PP
 \fB\fCget\fR \- Displays the value of an object.
 .PP
 Examples:
+.br
  get /domains/apps
+.br
  get /versions/1.0
 .PP
 \fB\fCset\fR \- Sets the value of an object.
 .PP
 Examples:
+.br
  set /version/app 1.0
+.br
  set /domains/apps/mobile mobile.xdt.io
 .SH AUTHOR
 .PP

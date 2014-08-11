@@ -27,7 +27,7 @@ total 4
 
 Using the "domains" row, the first column is the created index (12). The second is the modified index (12). The third column is the TTL (300). The fourth column is either "k" or "o" (k). A "k" means the value in the fifth column is a key, and "o" means it's an object. The fifth column is the name of the key or object (domains).
 
-Examples:
+Examples:  
  ls  
  ls /  
  ls domains  
@@ -35,7 +35,7 @@ Examples:
 
 `cd` - Change the working directory.
 
-Examples:
+Examples:  
  cd /  
  cd /domains  
  cd ..  
@@ -44,13 +44,13 @@ Examples:
 
 `get` - Displays the value of an object.
 
-Examples:
+Examples:  
  get /domains/apps  
  get /versions/1.0
 
 `set` - Sets the value of an object.
 
-Examples:
+Examples:  
  set /version/app 1.0  
  set /domains/apps/mobile mobile.xdt.io
 
