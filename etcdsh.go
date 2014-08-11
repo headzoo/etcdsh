@@ -12,23 +12,21 @@ import (
 
 // Main method.
 func main() {
-	help := flag.Bool("help", false, "Show command line options and exit.")
-	machines := flag.String("machines", "http://127.0.0.1:4001", "Set the etcd machine to connect to.")
-	version := flag.Bool("version", false, "Show the version and exit.")
+	help := flag.Bool("help", false, "Prints command line options and exit.")
+	machines := flag.String("machines", "http://127.0.0.1:4001", "Connect to these etcd servers. Defaults to 'http://127.0.0.1:4001'.")
+	version := flag.Bool("version", false, "Prints the etcdsh version and exit.")
 	flag.Parse()
 
 	if *help {
-		showHelp()
+		printHelp()
 		os.Exit(0)
 	}
 	if *version {
-		fmt.Printf("etcdsh %s - An interactive shell for the etcd server.\n\n", handlers.Version)
+		printVersion()
 		os.Exit(0)
 	}
 
 	client := etcd.NewClient([]string{*machines})
-	//client.Set("/go/etcdsh", "You caught me!", 0)
-
 	controller := handlers.NewController(client, io.Stdout, io.Stderr, io.Stdin)
 	controller.Add(handlers.NewLsHandler(controller))
 	controller.Add(handlers.NewSetHandler(controller))
@@ -41,7 +39,15 @@ func main() {
 	os.Exit(code)
 }
 
-// showHelp displays the flag defaults. Later on this should be change to make the output a little more pretty.
-func showHelp() {
-	flag.PrintDefaults()
+// printHelp prints the command line help information.
+func printHelp() {
+	printVersion()
+	flag.VisitAll(func(f *flag.Flag) {
+		fmt.Printf("-%-10s%s\n", f.Name, f.Usage)
+	})
+}
+
+// printVersion prints the app version information.
+func printVersion() {
+	fmt.Printf("etcdsh %s - An interactive shell for the etcd server.\n\n", handlers.Version)
 }
