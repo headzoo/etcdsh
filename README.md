@@ -62,3 +62,8 @@ Default configuration values are stored in `$HOME/.etcdsh`, which may contain th
 ```
 
 Command line values override the values from `.etcdsh`.
+
+### Bugs
+This was the first app I've written using [Go](http://golang.org/), as well as being the first app I've written using [vim](http://www.vim.org/). The code is probably sloppy, and breaks some Go conventions. Use the [issue system](https://github.com/headzoo/etcdsh/issues) to report bugs and broken conventions.
+
+
