@@ -75,10 +75,11 @@ func (c *Controller) Start() int {
 		if err != nil {
 			panic(err)
 		}
+		
+		line = strings.TrimSpace(line)
 		if strings.ToLower(line) == "q" || strings.ToLower(line) == "exit" {
 			return 0
 		}
-		
 		if strings.HasSuffix(line, "\\") {
 			buffer.WriteString(strings.TrimSuffix(line, "\\") + "\n")
 		} else {
@@ -98,7 +99,6 @@ func (c *Controller) Start() int {
 
 	return 0
 }
-
 
 // Client returns the etcd client
 func (c *Controller) Client() *etcd.Client {
