@@ -140,12 +140,12 @@ func (c *Controller) ChangeWorkingDir(wdir string) string {
 
 // ps1 returns the first type of prompt.
 func (c *Controller) ps1() string {
-	return fmt.Sprintf("%s@etcd:%s$ ", os.Getenv("USER"), c.wdir)
+	return fmt.Sprintf(c.config.PS1, os.Getenv("USER"), c.wdir)
 }
 
 // ps2 returns the second type of prompt.
 func (c *Controller) ps2() string {
-	return "> "
+	return c.config.PS2
 }
 
 // hasHandler returns whether a command handler has been added with the given id.

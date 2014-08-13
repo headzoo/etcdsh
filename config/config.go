@@ -11,12 +11,16 @@ const (
 	EnvPrefix = "ETCDSH_"
 	DefaultMachine = "http://127.0.0.1:4001"
 	DefaultColors  = false
+	DefaultPS1 = "%s@etcd:%s$ "
+	DefaultPS2 = "> "
 )
 
 // Represents configuration file values.
 type Config struct {
 	Machine string
 	Colors  bool
+	PS1 string
+	PS2 string
 }
 
 // Creates a new Config instance.
@@ -24,6 +28,8 @@ func New() *Config {
 	c := new(Config)
 	c.Machine = getenvString("MACHINE", DefaultMachine)
 	c.Colors = getenvBool("COLORS", DefaultColors)
+	c.PS1 = getenvString("PS1", DefaultPS1)
+	c.PS2 = getenvString("PS2", DefaultPS2)
 	
 	usr, err := user.Current()
 	if err == nil {
