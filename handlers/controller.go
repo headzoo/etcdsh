@@ -58,23 +58,37 @@ func NewController(config *config.Config, client *etcd.Client, stdout, stderr, s
 func (c *Controller) Start() int {
 	c.welcome()
 	
+	lineBuffer := ""
+	prompt := ""
 	for {
-		line, err := readline.String(c.prompt())
+		if lineBuffer == "" {
+			prompt = c.ps1()
+		} else {
+			prompt = c.ps2()
+		}
+		
+		line, err := readline.String(prompt)
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
 			panic(err)
 		}
+		if strings.HasSuffix(line, "\\") {
+			lineBuffer += strings.TrimSuffix(line, "\\") + "\n"
+			continue
+		}
 		
-		parts := strings.SplitN(line, " ", 3)
+		lineBuffer += line
+		parts := strings.SplitN(lineBuffer, " ", 3)
 		if parts[0] != "" {
-			readline.AddHistory(line)
+			readline.AddHistory(lineBuffer)
 			should_exit := c.handleInput(eio.NewFromArray(parts))
 			if should_exit {
 				break
 			}
 		}
+		lineBuffer = ""
 	}
 
 	return 0
@@ -102,6 +116,7 @@ func (c *Controller) Handlers() HandlerMap {
 
 // WorkingDir returns the working directory. The value of a is appended to the value.
 func (c *Controller) WorkingDir(a string) string {
+	a = strings.Replace(a, "\n", "", -1)
 	wdir := c.wdir + a
 	return path.Clean(wdir)
 }
@@ -117,8 +132,12 @@ func (c *Controller) ChangeWorkingDir(wdir string) string {
 	return c.wdir
 }
 
-func (c *Controller) prompt() string {
-	return fmt.Sprintf("%s@etcd:%s$ ", os.ExpandEnv("$USER"), c.wdir)
+func (c *Controller) ps1() string {
+	return fmt.Sprintf("%s@etcd:%s$ ", os.Getenv("USER"), c.wdir)
+}
+
+func (c *Controller) ps2() string {
+	return "> "
 }
 
 // hasHandler returns whether a command handler has been added with the given id.
