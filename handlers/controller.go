@@ -17,7 +17,6 @@ import (
 
 const (
 	Version    = "0.2"
-	ExitSignal = "__exit"
 )
 
 // Represents a map of Handler instances
@@ -76,6 +75,10 @@ func (c *Controller) Start() int {
 		if err != nil {
 			panic(err)
 		}
+		if strings.ToLower(line) == "q" || strings.ToLower(line) == "exit" {
+			return 0
+		}
+		
 		if strings.HasSuffix(line, "\\") {
 			buffer.WriteString(strings.TrimSuffix(line, "\\") + "\n")
 		} else {
@@ -88,16 +91,14 @@ func (c *Controller) Start() int {
 			parts := strings.SplitN(line, " ", 3)
 			if parts[0] != "" {
 				readline.AddHistory(line)
-				should_exit := c.handleInput(eio.NewFromArray(parts))
-				if should_exit {
-					break
-				}
+				c.handleInput(eio.NewFromArray(parts))
 			}
 		}
 	}
 
 	return 0
 }
+
 
 // Client returns the etcd client
 func (c *Controller) Client() *etcd.Client {
@@ -154,9 +155,7 @@ func (c *Controller) hasHandler(id string) bool {
 }
 
 // Handles the user input.
-// Returns a boolean indicating whether the skip should exit. True to exit, false otherwise.
-func (c *Controller) handleInput(i *eio.Input) bool {
-	should_exit := false
+func (c *Controller) handleInput(i *eio.Input) {
 	handler, ok := c.handlers[i.Cmd]
 	if !ok {
 		fmt.Fprintln(c.stderr, fmt.Sprintf("The command %s does not exist.", i.Cmd))
@@ -164,16 +163,12 @@ func (c *Controller) handleInput(i *eio.Input) bool {
 		fmt.Fprintln(c.stderr, fmt.Sprintf("Invalid use of command, use: %s", handler.Syntax()))
 	} else {
 		output, err := handler.Handle(i)
-		if output == ExitSignal {
-			should_exit = true
-		} else if err == nil {
+		if err == nil {
 			fmt.Fprint(c.stdout, output)
 		} else {
 			fmt.Fprintln(c.stderr, err)
 		}
 	}
-
-	return should_exit
 }
 
 // Welcome displays a welcome message.
@@ -182,8 +177,6 @@ func (c *Controller) welcome() {
 	if c.hasHandler("help") {
 		fmt.Fprintln(c.stdout, "Type 'help' for a list of commands.")
 	}
-	if c.hasHandler("q") {
-		fmt.Fprintln(c.stdout, "Type 'q' to quit.")
-	}
+	fmt.Fprintln(c.stdout, "Type 'q' to quit.")
 	fmt.Fprintln(c.stdout, "")
 }

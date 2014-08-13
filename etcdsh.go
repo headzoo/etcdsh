@@ -39,7 +39,6 @@ func main() {
 	controller := handlers.NewController(config, client, os.Stdout, os.Stderr, os.Stdin)
 	controller.Add(handlers.NewLsHandler(controller))
 	controller.Add(handlers.NewSetHandler(controller))
-	controller.Add(handlers.NewExitHandler(controller))
 	controller.Add(handlers.NewHelpHandler(controller))
 	controller.Add(handlers.NewCdHandler(controller))
 	controller.Add(handlers.NewGetHandler(controller))
