@@ -12,6 +12,7 @@ import (
 	"github.com/headzoo/etcdsh/config"
 	eio "github.com/headzoo/etcdsh/io"
 	"github.com/bobappleyard/readline"
+	"bytes"
 )
 
 const (
@@ -58,10 +59,11 @@ func NewController(config *config.Config, client *etcd.Client, stdout, stderr, s
 func (c *Controller) Start() int {
 	c.welcome()
 	
-	lineBuffer := ""
 	prompt := ""
+	buffer := bytes.NewBufferString("")
+	
 	for {
-		if lineBuffer == "" {
+		if buffer.Len() == 0 {
 			prompt = c.ps1()
 		} else {
 			prompt = c.ps2()
@@ -75,20 +77,23 @@ func (c *Controller) Start() int {
 			panic(err)
 		}
 		if strings.HasSuffix(line, "\\") {
-			lineBuffer += strings.TrimSuffix(line, "\\") + "\n"
-			continue
-		}
-		
-		lineBuffer += line
-		parts := strings.SplitN(lineBuffer, " ", 3)
-		if parts[0] != "" {
-			readline.AddHistory(lineBuffer)
-			should_exit := c.handleInput(eio.NewFromArray(parts))
-			if should_exit {
-				break
+			buffer.WriteString(strings.TrimSuffix(line, "\\") + "\n")
+		} else {
+			if buffer.Len() > 0 {
+				buffer.WriteString(line)
+				line = buffer.String()
+				buffer.Reset()
+			}
+
+			parts := strings.SplitN(line, " ", 3)
+			if parts[0] != "" {
+				readline.AddHistory(line)
+				should_exit := c.handleInput(eio.NewFromArray(parts))
+				if should_exit {
+					break
+				}
 			}
 		}
-		lineBuffer = ""
 	}
 
 	return 0
@@ -132,10 +137,12 @@ func (c *Controller) ChangeWorkingDir(wdir string) string {
 	return c.wdir
 }
 
+// ps1 returns the first type of prompt.
 func (c *Controller) ps1() string {
 	return fmt.Sprintf("%s@etcd:%s$ ", os.Getenv("USER"), c.wdir)
 }
 
+// ps2 returns the second type of prompt.
 func (c *Controller) ps2() string {
 	return "> "
 }
