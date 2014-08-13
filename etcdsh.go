@@ -1,3 +1,7 @@
+/**
+ * Requirements:
+ * 	libreadline-dev
+ */
 package main
 
 import (

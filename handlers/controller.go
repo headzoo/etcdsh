@@ -4,12 +4,14 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"io"
 	"path"
 	"strings"
 
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/headzoo/etcdsh/config"
-	"github.com/headzoo/etcdsh/io"
+	eio "github.com/headzoo/etcdsh/io"
+	"github.com/bobappleyard/readline"
 )
 
 const (
@@ -23,8 +25,8 @@ type HandlerMap map[string]Handler
 // Handler types are called when a command is given by the user.
 type Handler interface {
 	Command() string
-	Handle(*io.Input) (string, error)
-	Validate(*io.Input) bool
+	Handle(*eio.Input) (string, error)
+	Validate(*eio.Input) bool
 	Syntax() string
 	Description() string
 }
@@ -55,20 +57,24 @@ func NewController(config *config.Config, client *etcd.Client, stdout, stderr, s
 // Starts the controller.
 func (c *Controller) Start() int {
 	c.welcome()
-
-	for c.prompt() && c.scanner.Scan() {
-		parts := strings.SplitN(c.scanner.Text(), " ", 3)
+	
+	for {
+		line, err := readline.String(c.prompt())
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			panic(err)
+		}
+		
+		parts := strings.SplitN(line, " ", 3)
 		if parts[0] != "" {
-			should_exit := c.handleInput(io.NewFromArray(parts))
+			readline.AddHistory(line)
+			should_exit := c.handleInput(eio.NewFromArray(parts))
 			if should_exit {
 				break
 			}
 		}
-
-	}
-	if err := c.scanner.Err(); err != nil {
-		fmt.Fprintln(c.stderr, "Reading stdin: %s", err)
-		return 1
 	}
 
 	return 0
@@ -111,9 +117,8 @@ func (c *Controller) ChangeWorkingDir(wdir string) string {
 	return c.wdir
 }
 
-func (c *Controller) prompt() bool {
-	fmt.Fprintf(c.stdout, "%s@etcd:%s$ ", os.ExpandEnv("$USER"), c.wdir)
-	return true
+func (c *Controller) prompt() string {
+	return fmt.Sprintf("%s@etcd:%s$ ", os.ExpandEnv("$USER"), c.wdir)
 }
 
 // hasHandler returns whether a command handler has been added with the given id.
@@ -124,7 +129,7 @@ func (c *Controller) hasHandler(id string) bool {
 
 // Handles the user input.
 // Returns a boolean indicating whether the skip should exit. True to exit, false otherwise.
-func (c *Controller) handleInput(i *io.Input) bool {
+func (c *Controller) handleInput(i *eio.Input) bool {
 	should_exit := false
 	handler, ok := c.handlers[i.Cmd]
 	if !ok {
