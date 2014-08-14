@@ -77,7 +77,7 @@ func (h *LsHandler) Description() string {
 // Handles the "ls" command.
 func (h *LsHandler) Handle(i *Input) (string, error) {
 	dir := h.controller.WorkingDir(i.Key)
-	resp, err := h.controller.Client().Get(dir, false, false)
+	resp, err := h.controller.Client().Get(dir, true, false)
 	if err != nil {
 		return "", err
 	}
