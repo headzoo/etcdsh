@@ -66,9 +66,7 @@ func main() {
 	controller.Add(handlers.NewHelpHandler(controller))
 	controller.Add(handlers.NewCdHandler(controller))
 	controller.Add(handlers.NewGetHandler(controller))
-	code := controller.Start()
-
-	os.Exit(code)
+	os.Exit(controller.Start())
 }
 
 // printHelp prints the command line help information.
