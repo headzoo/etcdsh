@@ -110,15 +110,6 @@ func (c *Controller) Start() int {
 				in.Args = parts[1:]
 			}
 			c.handleInput(in)
-			
-			/*
-			parts := strings.SplitN(line, " ", 2)
-			if parts[0] != "" {
-				readline.AddHistory(line)
-				
-				//c.handleInput(NewInputFromArray(parts))
-			}
-			*/
 		}
 	}
 
