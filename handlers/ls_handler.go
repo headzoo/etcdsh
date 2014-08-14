@@ -71,7 +71,7 @@ func (h *LsHandler) Command() string {
 
 // Syntax returns a string that demonstrates how to use the command.
 func (h *LsHandler) Syntax() string {
-	return "ls <path>"
+	return "ls [options] <path>"
 }
 
 // Validate returns whether the user input is valid for this handler.

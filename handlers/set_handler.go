@@ -1,5 +1,16 @@
 package handlers
 
+import (
+	"flag"
+	"fmt"
+)
+
+// Command line options for the ls command.
+type SetOptions struct {
+	PrintHelp  bool
+	TTL uint64
+}
+
 // SetHandler handles the "ls" command.
 type SetHandler struct {
 	controller *Controller
@@ -21,12 +32,12 @@ func (h *SetHandler) Command() string {
 
 // Validate returns whether the user input is valid.
 func (h *SetHandler) Validate(i *Input) bool {
-	return len(i.Args) > 1
+	return true
 }
 
 // Syntax returns a string that demonstrates how to use the command.
 func (h *SetHandler) Syntax() string {
-	return "set <path> <value>"
+	return "set [options] <path> <value>"
 }
 
 // Description returns a string that describes the command.
@@ -36,10 +47,36 @@ func (h *SetHandler) Description() string {
 
 // Handles the "ls" command.
 func (h *SetHandler) Handle(i *Input) (string, error) {
-	resp, err := h.controller.Client().Set(i.Args[0], i.Args[1], 0)
+	opts, args, err := h.setupOptions(i.Args)
+	if opts == nil || err != nil {
+		return "", err
+	}
+	
+	resp, err := h.controller.Client().Set(args[0], args[1], opts.TTL)
 	if err != nil {
 		return "", err
 	}
 
-	return resp.Node.Value + "\n", nil
+	return fmt.Sprintf("%s\n", resp.Node.Value), nil
+}
+
+// setupOptions builds a FlagSet and parses the args passed to the command.
+func (h *SetHandler) setupOptions(args []string) (*SetOptions, []string, error) {
+	opts := &SetOptions{}
+	flags := flag.NewFlagSet("set_flags", flag.ContinueOnError)
+	flags.BoolVar(&opts.PrintHelp, "h", false, "Show the command help")
+	flags.Uint64Var(&opts.TTL, "t", 0, "Sets the TTL")
+
+	err := flags.Parse(args)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	args = flags.Args()
+	if opts.PrintHelp || len(args) < 2 {
+		printCommandHelp(h, flags)
+		return nil, nil, nil
+	}
+
+	return opts, args, nil
 }

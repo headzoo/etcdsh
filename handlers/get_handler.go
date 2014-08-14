@@ -1,5 +1,7 @@
 package handlers
 
+import "fmt"
+
 // GetHandler handles the "exit" command.
 type GetHandler struct {
 	controller *Controller
@@ -42,5 +44,5 @@ func (h *GetHandler) Handle(i *Input) (string, error) {
 		return "", err
 	}
 
-	return resp.Node.Value + "\n", nil
+	return fmt.Sprintf("%s\n", resp.Node.Value), nil
 }
