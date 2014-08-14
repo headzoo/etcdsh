@@ -142,17 +142,37 @@ func (c *Controller) ChangeWorkingDir(wdir string) string {
 		c.wdir = c.WorkingDir("/"+wdir)
 	}
 
-	resp, err := c.client.Get(c.wdir, false, false)
+	resp, err := c.client.Get(c.wdir, true, true)
 	if err != nil {
 		panic(err)
 	}
-
-	c.wdirKeys = make([]string, len(resp.Node.Nodes))
-	for i, node := range resp.Node.Nodes {
-		c.wdirKeys[i] = node.Key
-	}
+	
+	count := c.getNodeCount(resp.Node, 0)
+	c.wdirKeys = make([]string, count)
+	c.addNodeToWDir(resp.Node, 0)
 
 	return c.wdir
+}
+
+// addNodeToWDir adds the keys from all child nodes to the working dir keys.
+func (c *Controller) addNodeToWDir(node *etcd.Node, index int) int {
+	for _, n := range node.Nodes {
+		c.wdirKeys[index] = n.Key
+		index++
+		index = c.addNodeToWDir(n, index)
+	}
+	
+	return index
+}
+
+// getNodeCount recursively counts the child nodes in node.
+func (c *Controller) getNodeCount(node *etcd.Node, count int) int {
+	for _, n := range node.Nodes {
+		count++
+		count = c.getNodeCount(n, count)
+	}
+	
+	return count
 }
 
 // ps1 returns the first type of prompt.
@@ -193,9 +213,8 @@ func (c *Controller) handleInput(i *Input) {
 // filenameCompleter is a callback function for the readline.Completer variable.
 func (c *Controller) filenameCompleter(query, ctx string) []string {
 	var keys []string
-	total := len(c.wdirKeys)
-	for i := 0; i < total; i++ {
-		base := path.Base(c.wdirKeys[i])
+	for _, key := range c.wdirKeys {
+		base := strings.TrimPrefix(key, "/")
 		if strings.HasPrefix(base, query) {
 			keys = append(keys, base)
 		}
