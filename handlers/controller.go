@@ -9,15 +9,13 @@ import (
 	"bytes"
 
 	"github.com/coreos/go-etcd/etcd"
+	"github.com/headzoo/etcdsh/etcdsh"
 	"github.com/headzoo/etcdsh/config"
 	"github.com/bobappleyard/readline"
 	"github.com/headzoo/etcdsh/parser"
 	"net/url"
 )
 
-const (
-	Version = "0.2"
-)
 
 // Controller stores handlers and calls them.
 type Controller struct {
@@ -37,7 +35,7 @@ func NewController(conf *config.Config, client *etcd.Client, stdout, stderr, std
 	c.client = client
 	c.stdout, c.stderr, c.stdin = stdout, stderr, stdin
 	c.handlers = make(HandlerMap)
-
+	
 	c.prompter = parser.NewPrompt()
 	c.prompter.AddFormatter('w', func() string {
 			return c.wdir
@@ -46,7 +44,7 @@ func NewController(conf *config.Config, client *etcd.Client, stdout, stderr, std
 			return path.Base(c.wdir)
 		})
 	c.prompter.AddFormatter('v', func() string {
-			return Version
+			return etcdsh.Version
 		})
 	c.prompter.AddFormatter('m', func() string {
 			u, err := url.Parse(conf.Machine)

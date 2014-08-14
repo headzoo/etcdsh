@@ -12,6 +12,7 @@ import (
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/headzoo/etcdsh/config"
 	"github.com/headzoo/etcdsh/handlers"
+	"github.com/headzoo/etcdsh/etcdsh"
 )
 
 // Main method.
@@ -70,5 +71,5 @@ func printHelp() {
 
 // printVersion prints the app version information.
 func printVersion() {
-	fmt.Printf("etcdsh %s - An interactive shell for the etcd server.\n\n", handlers.Version)
+	fmt.Printf("etcdsh %s - An interactive shell for the etcd server.\n\n", etcdsh.Version)
 }
