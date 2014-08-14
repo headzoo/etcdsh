@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"path"
 	"runtime"
@@ -9,7 +10,6 @@ import (
 
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/headzoo/etcdsh/env"
-	"flag"
 )
 
 const (
@@ -27,22 +27,30 @@ const (
 )
 
 // Column widths to use for the "ls" output.
-type ColumnWidths struct {
+type LsColumnWidths struct {
 	CreatedIndex  int
 	ModifiedIndex int
 	TTL           int
+	Keys          int
 }
 
 // The color codes to use when outputting.
-type OutputColors struct {
+type LsOutputColors struct {
 	Key    string
 	Object string
+}
+
+// Command line options for the ls command.
+type LsOptions struct {
+	PrintHelp  bool
+	LongFormat bool
+	Sorted     bool
 }
 
 // LsHandler handles the "ls" command.
 type LsHandler struct {
 	CommandHandler
-	colors     OutputColors
+	colors     LsOutputColors
 	use_colors bool
 }
 
@@ -51,7 +59,7 @@ func NewLsHandler(controller *Controller) *LsHandler {
 	h := new(LsHandler)
 	h.controller = controller
 	h.setupColors()
-	
+
 	return h
 }
 
@@ -77,29 +85,46 @@ func (h *LsHandler) Description() string {
 
 // Handles the "ls" command.
 func (h *LsHandler) Handle(i *Input) (string, error) {
-	flags := flag.NewFlagSet("ls_flagset", flag.ContinueOnError)
-	help := flags.Bool("h", false, "Show command help")
-	sort := flags.Bool("s", false, "Sort the results")
-	long := flags.Bool("l", false, "Use long list format")
-	if flags.Parse(i.Args) != nil {
-		return "", nil
+	opts, args, err := h.setupOptions(i.Args)
+	if opts == nil || err != nil {
+		return "", err
 	}
-	if *help || len(flags.Args()) == 0 {
-		printCommandHelp(h, flags)
-		return "", nil
-	}
-	
-	args := flags.Args()
+
 	dir := h.controller.WorkingDir(args[0])
-	resp, err := h.controller.Client().Get(dir, *sort, false)
+	resp, err := h.controller.Client().Get(dir, opts.Sorted, false)
 	if err != nil {
 		return "", err
 	}
 
-	if *long {
+	if opts.LongFormat {
 		return h.respToLongOutput(resp), nil
 	}
 	return h.respToShortOutput(resp), nil
+}
+
+// setupOptions builds a FlagSet and parses the args passed to the command.
+func (h *LsHandler) setupOptions(args []string) (*LsOptions, []string, error) {
+	opts := &LsOptions{}
+	flags := flag.NewFlagSet("ls_flags", flag.ContinueOnError)
+	flags.BoolVar(&opts.PrintHelp, "h", false, "Show the command help")
+	flags.BoolVar(&opts.LongFormat, "l", false, "Use long list format")
+	flags.BoolVar(&opts.Sorted, "s", false, "Sort the results")
+
+	err := flags.Parse(args)
+	if err != nil {
+		return nil, nil, err
+	}
+	if opts.PrintHelp {
+		printCommandHelp(h, flags)
+		return nil, nil, nil
+	}
+
+	args = flags.Args()
+	if len(args) == 0 {
+		args = []string{"/"}
+	}
+
+	return opts, args, nil
 }
 
 // respToLongOuput formats an etcd response for output in the long format.
@@ -112,16 +137,16 @@ func (h *LsHandler) respToLongOutput(resp *etcd.Response) string {
 		CreatedIndex:  0,
 		ModifiedIndex: 0,
 	}
-	output.WriteString(h.formatNode(&node, widths))
+	output.WriteString(h.formatNodeLong(&node, widths))
 	node.Key = ".."
-	output.WriteString(h.formatNode(&node, widths))
+	output.WriteString(h.formatNodeLong(&node, widths))
 
 	total := 2
 	for _, node := range resp.Node.Nodes {
-		output.WriteString(h.formatNode(node, widths))
+		output.WriteString(h.formatNodeLong(node, widths))
 		total++
 		for _, n := range node.Nodes {
-			output.WriteString(h.formatNode(n, widths))
+			output.WriteString(h.formatNodeLong(n, widths))
 			total++
 		}
 	}
@@ -132,13 +157,14 @@ func (h *LsHandler) respToLongOutput(resp *etcd.Response) string {
 // respToShortOutput formats an etcd response for output in the short format.
 func (h *LsHandler) respToShortOutput(resp *etcd.Response) string {
 	output := bytes.NewBufferString("")
+	widths := columnWidths(resp.Node)
 	for _, node := range resp.Node.Nodes {
-		output.WriteString(path.Base(node.Key))
-		output.WriteString(" ")
+		output.WriteString(h.formatNodeShort(node, widths))
+		//output.WriteString(" ")
 
 		for _, n := range node.Nodes {
-			output.WriteString(path.Base(n.Key))
-			output.WriteString(" ")
+			output.WriteString(h.formatNodeShort(n, widths))
+			//output.WriteString(" ")
 		}
 	}
 
@@ -146,8 +172,28 @@ func (h *LsHandler) respToShortOutput(resp *etcd.Response) string {
 	return output.String()
 }
 
-// formatNode formats the node as a string for output to the console.
-func (h *LsHandler) formatNode(n *etcd.Node, w ColumnWidths) string {
+func (h *LsHandler) formatNodeShort(n *etcd.Node, w LsColumnWidths) string {
+	prefix, postfix := "", ""
+	if h.use_colors {
+		if n.Dir {
+			prefix = "\x1b[" + h.colors.Key + ";1m"
+		} else {
+			prefix = "\x1b[" + h.colors.Object + ";1m"
+		}
+		postfix = "\x1b[0m"
+	}
+
+	return fmt.Sprintf(
+		"%s%-*s%s",
+		prefix,
+		w.Keys,
+		path.Base(n.Key),
+		postfix,
+	)
+}
+
+// formatNodeLong formats the node as a string for output to the console.
+func (h *LsHandler) formatNodeLong(n *etcd.Node, w LsColumnWidths) string {
 	typeValue := SymbolTypeKeys
 	if !n.Dir {
 		typeValue = SymbolTypeObjects
@@ -157,9 +203,9 @@ func (h *LsHandler) formatNode(n *etcd.Node, w ColumnWidths) string {
 	postfix := ""
 	if h.use_colors {
 		if n.Dir {
-			prefix = "\x1b["+h.colors.Key+";1m"
+			prefix = "\x1b[" + h.colors.Key + ";1m"
 		} else {
-			prefix = "\x1b["+h.colors.Object+";1m"
+			prefix = "\x1b[" + h.colors.Object + ";1m"
 		}
 		postfix = "\x1b[0m"
 	}
@@ -181,14 +227,14 @@ func (h *LsHandler) formatNode(n *etcd.Node, w ColumnWidths) string {
 
 // setupColors sets the value of LsHandler.colors.
 func (h *LsHandler) setupColors() {
-	h.colors = OutputColors{}
+	h.colors = LsOutputColors{}
 	h.use_colors = false
 
 	if h.controller.Config().Colors && runtime.GOOS == "linux" {
 		envColors := env.NewColors()
 		di, _ := envColors.GetLSDefault("di", DefaultColorKeys)
 		fi, _ := envColors.GetLSDefault("fi", DefaultColorObjects)
-		h.colors = OutputColors{
+		h.colors = LsOutputColors{
 			Key:    di,
 			Object: fi,
 		}
@@ -197,11 +243,12 @@ func (h *LsHandler) setupColors() {
 }
 
 // columnWidths returns the widths for each column in the "ls" output.
-func columnWidths(resp_node *etcd.Node) ColumnWidths {
-	widths := ColumnWidths{
+func columnWidths(resp_node *etcd.Node) LsColumnWidths {
+	widths := LsColumnWidths{
 		CreatedIndex:  len(strconv.FormatUint(resp_node.CreatedIndex, 10)),
 		ModifiedIndex: len(strconv.FormatUint(resp_node.ModifiedIndex, 10)),
 		TTL:           len(strconv.FormatInt(resp_node.TTL, 10)),
+		Keys:          len(resp_node.Key),
 	}
 	cw := 0
 
@@ -218,6 +265,10 @@ func columnWidths(resp_node *etcd.Node) ColumnWidths {
 		if cw > widths.TTL {
 			widths.TTL = cw
 		}
+		cw = len(node.Key)
+		if cw > widths.Keys {
+			widths.Keys = cw
+		}
 		for _, n := range node.Nodes {
 			cw = len(strconv.FormatUint(n.CreatedIndex, 10))
 			if cw > widths.CreatedIndex {
@@ -231,9 +282,12 @@ func columnWidths(resp_node *etcd.Node) ColumnWidths {
 			if cw > widths.TTL {
 				widths.TTL = cw
 			}
+			cw = len(n.Key)
+			if cw > widths.Keys {
+				widths.Keys = cw
+			}
 		}
 	}
 
 	return widths
 }
-
