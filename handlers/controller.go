@@ -7,13 +7,13 @@ import (
 	"path"
 	"strings"
 	"bytes"
-
+	"net/url"
+	
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/headzoo/etcdsh/etcdsh"
 	"github.com/headzoo/etcdsh/config"
 	"github.com/bobappleyard/readline"
 	"github.com/headzoo/etcdsh/parser"
-	"net/url"
 )
 
 // Controller stores handlers and calls them.
