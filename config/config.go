@@ -20,7 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
- */
+*/
 
 package config
 
@@ -51,9 +51,9 @@ type Config struct {
 func New() *Config {
 	conf := &Config{
 		Machine: getenvString("MACHINE", DefaultMachine),
-		Colors: getenvBool("COLORS", DefaultColors),
-		PS1: getenvString("PS1", DefaultPS1),
-		PS2: getenvString("PS2", DefaultPS2),
+		Colors:  getenvBool("COLORS", DefaultColors),
+		PS1:     getenvString("PS1", DefaultPS1),
+		PS2:     getenvString("PS2", DefaultPS2),
 	}
 
 	usr, err := user.Current()

@@ -20,7 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
- */
+*/
 
 package handlers
 
@@ -31,8 +31,8 @@ import (
 
 // Command line options for the ls command.
 type SetOptions struct {
-	PrintHelp  bool
-	TTL uint64
+	PrintHelp bool
+	TTL       uint64
 }
 
 // SetHandler handles the "ls" command.
@@ -73,7 +73,7 @@ func (h *SetHandler) Handle(i *Input) (string, error) {
 	if opts == nil || err != nil {
 		return "", err
 	}
-	
+
 	resp, err := h.controller.Client().Set(args[0], args[1], opts.TTL)
 	if err != nil {
 		return "", err

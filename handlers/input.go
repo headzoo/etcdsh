@@ -20,23 +20,23 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
- */
+*/
 
 package handlers
 
 // Represents user input.
 type Input struct {
-	Cmd   string
-	Args  []string
+	Cmd  string
+	Args []string
 }
 
 // Creates a new Input type.
 func NewInput(cmd string) *Input {
 	i := &Input{
-		Cmd: cmd,
+		Cmd:  cmd,
 		Args: []string{},
 	}
-	
+
 	return i
 }
 

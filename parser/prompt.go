@@ -25,15 +25,15 @@ THE SOFTWARE.
 
 Parses command prompt definition strings.
 See http://www.cyberciti.biz/tips/howto-linux-unix-bash-shell-setup-prompt.html
- */
+*/
 package parser
 
 import (
-	"os/user"
-	"strings"
 	"bytes"
 	"os"
+	"os/user"
 	"path"
+	"strings"
 	"time"
 )
 
@@ -213,4 +213,3 @@ func formatTimeAmPm() string {
 func formatTime24Long() string {
 	return time.Now().Format("15:04")
 }
-

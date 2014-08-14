@@ -20,25 +20,25 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
- */
+*/
 
 package handlers
 
 import (
+	"bytes"
 	"fmt"
-	"os"
 	"io"
+	"net/url"
+	"os"
 	"path"
 	"strings"
-	"bytes"
-	"net/url"
 
-	"github.com/coreos/go-etcd/etcd"
-	"github.com/headzoo/etcdsh/etcdsh"
-	"github.com/headzoo/etcdsh/config"
 	"github.com/bobappleyard/readline"
-	"github.com/headzoo/etcdsh/parser"
+	"github.com/coreos/go-etcd/etcd"
 	"github.com/flynn/go-shlex"
+	"github.com/headzoo/etcdsh/config"
+	"github.com/headzoo/etcdsh/etcdsh"
+	"github.com/headzoo/etcdsh/parser"
 )
 
 // Controller stores handlers and calls them.
@@ -55,33 +55,33 @@ type Controller struct {
 // Create a new Controller.
 func NewController(conf *config.Config, client *etcd.Client, stdout, stderr, stdin *os.File) *Controller {
 	c := &Controller{
-		config: conf,
-		client: client,
-		stdout: stdout,
-		stdin: stdin,
-		stderr: stderr,
-		wdir: "/",
+		config:   conf,
+		client:   client,
+		stdout:   stdout,
+		stdin:    stdin,
+		stderr:   stderr,
+		wdir:     "/",
 		handlers: make(HandlerMap),
 		prompter: parser.NewPrompt(),
 	}
-	
+
 	c.prompter.AddFormatter('w', func() string {
-			return c.wdir
-		})
+		return c.wdir
+	})
 	c.prompter.AddFormatter('W', func() string {
-			return path.Base(c.wdir)
-		})
+		return path.Base(c.wdir)
+	})
 	c.prompter.AddFormatter('v', func() string {
-			return etcdsh.Version
-		})
+		return etcdsh.Version
+	})
 	c.prompter.AddFormatter('m', func() string {
-			u, err := url.Parse(conf.Machine)
-			if err == nil {
-				return u.Host
-			} else {
-				return conf.Machine
-			}
-		})
+		u, err := url.Parse(conf.Machine)
+		if err == nil {
+			return u.Host
+		} else {
+			return conf.Machine
+		}
+	})
 
 	return c
 }
@@ -122,13 +122,13 @@ func (c *Controller) Start() int {
 				line = buffer.String()
 				buffer.Reset()
 			}
-			
+
 			parts, err := shlex.Split(line)
 			if err != nil {
 				panic(err)
 			}
 			readline.AddHistory(line)
-			
+
 			in := NewInput(parts[0])
 			if len(parts) > 1 {
 				in.Args = parts[1:]
@@ -172,14 +172,14 @@ func (c *Controller) ChangeWorkingDir(wdir string) string {
 	if strings.HasPrefix(wdir, "/") {
 		c.wdir = wdir
 	} else {
-		c.wdir = c.WorkingDir("/"+wdir)
+		c.wdir = c.WorkingDir("/" + wdir)
 	}
 
 	resp, err := c.client.Get(c.wdir, true, true)
 	if err != nil {
 		panic(err)
 	}
-	
+
 	count := c.getNodeCount(resp.Node, 0)
 	c.wdirKeys = make([]string, count)
 	c.addNodeToWorkingDirKeys(resp.Node, 0)
@@ -194,7 +194,7 @@ func (c *Controller) addNodeToWorkingDirKeys(node *etcd.Node, index int) int {
 		index++
 		index = c.addNodeToWorkingDirKeys(n, index)
 	}
-	
+
 	return index
 }
 
@@ -204,7 +204,7 @@ func (c *Controller) getNodeCount(node *etcd.Node, count int) int {
 		count++
 		count = c.getNodeCount(n, count)
 	}
-	
+
 	return count
 }
 
