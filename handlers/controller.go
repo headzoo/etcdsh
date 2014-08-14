@@ -16,7 +16,6 @@ import (
 	"net/url"
 )
 
-
 // Controller stores handlers and calls them.
 type Controller struct {
 	wdir                  string
