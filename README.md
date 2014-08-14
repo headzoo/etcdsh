@@ -69,6 +69,17 @@ An example configuration.
 * "colors" Whether to use colors in output. Only applicable to Linux. The [LS_COLORS](http://blog.twistedcode.org/2008/04/lscolors-explained.html) environment variable is used to determine which colors to use.
 
 
+### Custom Prompt
+The terminal prompt may be customized using the environmental variables ETCDSH_PS1 and ETCDSH_PS2. The prompt format is nearly identital to the format used by bash. See [How to: Change / Setup bash custom prompt (PS1)](http://www.cyberciti.biz/tips/howto-linux-unix-bash-shell-setup-prompt.html) for a complete list of escape codes.
+
+Example:
+```
+# This is the default etcdsh prompt. The prompt will look like 'sean@etcd:domains$ '.
+export ETCDSH_PS1="\u@etcd:\w\$ "
+```
+
+Escape sequences not currently supported by etcdsh: \\D, \\V, \\!, \\#, \\j, \nnn, \\[, and \\]. Additionally bash commands cannot be embedded in the prompt. For example you can't use `\u@$(hostname):`.
+
 ### Bugs
 This was the first app I've written using [Go](http://golang.org/). The code is probably sloppy, and breaks some Go conventions. Use the [issue system](https://github.com/headzoo/etcdsh/issues) to report bugs and broken conventions.
 
