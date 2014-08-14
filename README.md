@@ -105,3 +105,6 @@ Escape sequences not currently supported by etcdsh: \\D, \\V, \\!, \\#, \\j, \nn
 This was the first app I've written using [Go](http://golang.org/). The code is probably sloppy, and breaks some Go conventions. Use the [issue system](https://github.com/headzoo/etcdsh/issues) to report bugs and broken conventions.
 
 
+### TODO
+* Write the command history to a file, eg `$HOME/.etcdsh_history`.
+* Auto complete needs to work recursivly.
