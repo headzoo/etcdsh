@@ -13,6 +13,7 @@ import (
 	eio "github.com/headzoo/etcdsh/io"
 	"github.com/bobappleyard/readline"
 	"github.com/headzoo/etcdsh/parser"
+	"net/url"
 )
 
 const (
@@ -42,10 +43,10 @@ type Controller struct {
 }
 
 // Create a new Controller.
-func NewController(config *config.Config, client *etcd.Client, stdout, stderr, stdin *os.File) *Controller {
+func NewController(conf *config.Config, client *etcd.Client, stdout, stderr, stdin *os.File) *Controller {
 	c := new(Controller)
 	c.wdir = "/"
-	c.config = config
+	c.config = conf
 	c.client = client
 	c.stdout, c.stderr, c.stdin = stdout, stderr, stdin
 	c.handlers = make(HandlerMap)
@@ -59,6 +60,14 @@ func NewController(config *config.Config, client *etcd.Client, stdout, stderr, s
 		})
 	c.prompter.AddFormatter('v', func() string {
 			return Version
+		})
+	c.prompter.AddFormatter('m', func() string {
+			u, err := url.Parse(conf.Machine)
+			if err == nil {
+				return u.Host
+			} else {
+				return conf.Machine
+			}
 		})
 	
 	return c
