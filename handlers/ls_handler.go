@@ -32,7 +32,7 @@ type ColumnWidths struct {
 	TTL           int
 }
 
-// The color codes to use when outputing.
+// The color codes to use when outputting.
 type OutputColors struct {
 	Key    string
 	Object string
