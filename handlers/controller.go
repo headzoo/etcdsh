@@ -19,18 +19,6 @@ const (
 	Version = "0.2"
 )
 
-// Represents a map of Handler instances
-type HandlerMap map[string]Handler
-
-// Handler types are called when a command is given by the user.
-type Handler interface {
-	Command() string
-	Handle(*Input) (string, error)
-	Validate(*Input) bool
-	Syntax() string
-	Description() string
-}
-
 // Controller stores handlers and calls them.
 type Controller struct {
 	wdir                  string
