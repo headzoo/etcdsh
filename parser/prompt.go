@@ -37,7 +37,6 @@ func NewPrompt() *Prompt {
 	p.formatters['e'] = formatEscape
 	p.formatters['h'] = formatHostnameShort
 	p.formatters['H'] = formatHostnameLong
-	p.formatters['j'] = formatNumJobs
 	p.formatters['n'] = formatNewline
 	p.formatters['r'] = formatCarriageReturn
 	p.formatters['s'] = formatShell
@@ -133,12 +132,6 @@ func formatHostnameLong() string {
 	} else {
 		return DefaultHostname
 	}
-}
-
-// formatNumJobs handles the \j escape sequence.
-// Returns the number of jobs currently managed by the shell.
-func formatNumJobs() string {
-	return "0"
 }
 
 // formatUser handles the \u escape sequence.
