@@ -11,7 +11,7 @@ const (
 	EnvPrefix = "ETCDSH_"
 	DefaultMachine = "http://127.0.0.1:4001"
 	DefaultColors  = false
-	DefaultPS1 = "%s@etcd:%s$ "
+	DefaultPS1 = "\\u@etcd:\\w\\$ "
 	DefaultPS2 = "> "
 )
 

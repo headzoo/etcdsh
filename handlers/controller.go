@@ -7,12 +7,13 @@ import (
 	"io"
 	"path"
 	"strings"
-
+	"bytes"
+	
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/headzoo/etcdsh/config"
 	eio "github.com/headzoo/etcdsh/io"
 	"github.com/bobappleyard/readline"
-	"bytes"
+	"github.com/headzoo/etcdsh/parser"
 )
 
 const (
@@ -39,18 +40,30 @@ type Controller struct {
 	client                *etcd.Client
 	stdout, stderr, stdin *os.File
 	wdir                  string
+	prompter              *parser.Prompt
 }
 
 // Create a new Controller.
 func NewController(config *config.Config, client *etcd.Client, stdout, stderr, stdin *os.File) *Controller {
 	c := new(Controller)
-	c.handlers = make(HandlerMap)
-	c.scanner = bufio.NewScanner(stdin)
+	c.wdir = "/"
 	c.config = config
 	c.client = client
 	c.stdout, c.stderr, c.stdin = stdout, stderr, stdin
-	c.wdir = "/"
-
+	c.handlers = make(HandlerMap)
+	c.scanner = bufio.NewScanner(stdin)
+	
+	c.prompter = parser.NewPrompt()
+	c.prompter.AddFormatter('w', func() string {
+			return c.wdir
+		})
+	c.prompter.AddFormatter('W', func() string {
+			return path.Base(c.wdir)
+		})
+	c.prompter.AddFormatter('v', func() string {
+			return Version
+		})
+	
 	return c
 }
 
@@ -140,7 +153,9 @@ func (c *Controller) ChangeWorkingDir(wdir string) string {
 
 // ps1 returns the first type of prompt.
 func (c *Controller) ps1() string {
-	return fmt.Sprintf(c.config.PS1, os.Getenv("USER"), c.wdir)
+	prompt, _ := c.prompter.Parse(c.config.PS1)
+	return prompt
+	//return fmt.Sprintf(c.config.PS1, os.Getenv("USER"), c.wdir)
 }
 
 // ps2 returns the second type of prompt.
