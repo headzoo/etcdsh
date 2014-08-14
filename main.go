@@ -39,19 +39,20 @@ import (
 func main() {
 	conf := config.New()
 
-	help := flag.Bool("help", false, "Prints command line options and exit.")
-	version := flag.Bool("version", false, "Prints the etcdsh version and exit.")
+	help, version := false, false
+	flag.BoolVar(&help, "help", false, "Prints command line options and exit.")
+	flag.BoolVar(&version, "version", false, "Prints the etcdsh version and exit.")
 	flag.StringVar(&conf.Machine, "machine", conf.Machine, "Connect to this etcd server.")
 	flag.StringVar(&conf.PS1, "ps1", conf.PS1, "First prompt format")
 	flag.StringVar(&conf.PS2, "ps2", conf.PS2, "Second prompt format")
 	flag.BoolVar(&conf.Colors, "colors", conf.Colors, "Use colors in display.")
 	flag.Parse()
 
-	if *help {
+	if help {
 		printHelp()
 		os.Exit(0)
 	}
-	if *version {
+	if version {
 		printVersion()
 		os.Exit(0)
 	}
