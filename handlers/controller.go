@@ -8,7 +8,7 @@ import (
 	"strings"
 	"bytes"
 	"net/url"
-	
+
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/headzoo/etcdsh/etcdsh"
 	"github.com/headzoo/etcdsh/config"
@@ -19,7 +19,7 @@ import (
 // Controller stores handlers and calls them.
 type Controller struct {
 	wdir                  string
-	wdirKeys			  []string
+	wdirKeys              []string
 	handlers              HandlerMap
 	config                *config.Config
 	client                *etcd.Client
@@ -30,13 +30,13 @@ type Controller struct {
 // Create a new Controller.
 func NewController(conf *config.Config, client *etcd.Client, stdout, stderr, stdin *os.File) *Controller {
 	c := new(Controller)
-	
+
 	c.config = conf
 	c.client = client
 	c.stdout, c.stderr, c.stdin = stdout, stderr, stdin
 	c.wdir = "/"
 	c.handlers = make(HandlerMap)
-	
+
 	c.prompter = parser.NewPrompt()
 	c.prompter.AddFormatter('w', func() string {
 			return c.wdir
@@ -55,7 +55,7 @@ func NewController(conf *config.Config, client *etcd.Client, stdout, stderr, std
 				return conf.Machine
 			}
 		})
-	
+
 	return c
 }
 
@@ -67,7 +67,7 @@ func (c *Controller) Start() int {
 	readline.Completer = c.filenameCompleter
 	buffer := bytes.NewBufferString("")
 	prompt := ""
-	
+
 	for {
 		if buffer.Len() == 0 {
 			prompt = c.ps1()
@@ -146,12 +146,12 @@ func (c *Controller) ChangeWorkingDir(wdir string) string {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	c.wdirKeys = make([]string, len(resp.Node.Nodes))
 	for i, node := range resp.Node.Nodes {
 		c.wdirKeys[i] = node.Key
 	}
-	
+
 	return c.wdir
 }
 
