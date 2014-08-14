@@ -1,10 +1,8 @@
 package handlers
 
-import "github.com/headzoo/etcdsh/io"
-
 // SkelHandler handles the "exit" command.
 type SkelHandler struct {
-	controller *Controller
+	CommandHandler
 }
 
 // NewSkelHandler returns a new ExitHandler instance.
@@ -21,7 +19,7 @@ func (h *SkelHandler) Command() string {
 }
 
 // Validate returns whether the user input is valid.
-func (h *SkelHandler) Validate(i *io.Input) bool {
+func (h *SkelHandler) Validate(i *Input) bool {
 	return true
 }
 
@@ -36,6 +34,6 @@ func (h *SkelHandler) Description() string {
 }
 
 // Handles the "skel" command.
-func (h *SkelHandler) Handle(i *io.Input) (string, error) {
+func (h *SkelHandler) Handle(i *Input) (string, error) {
 	return "", nil
 }
