@@ -176,11 +176,11 @@ func (h *LsHandler) formatNodeShort(n *etcd.Node, w LsColumnWidths) string {
 	prefix, postfix := "", ""
 	if h.use_colors {
 		if n.Dir {
-			prefix = "\x1b[" + h.colors.Key + ";1m"
+			prefix = env.ColorPrefixCode(h.colors.Key)
 		} else {
-			prefix = "\x1b[" + h.colors.Object + ";1m"
+			prefix = env.ColorPrefixCode(h.colors.Object)
 		}
-		postfix = "\x1b[0m"
+		postfix = env.ColorPostfixCode()
 	}
 
 	return fmt.Sprintf(
@@ -203,11 +203,12 @@ func (h *LsHandler) formatNodeLong(n *etcd.Node, w LsColumnWidths) string {
 	postfix := ""
 	if h.use_colors {
 		if n.Dir {
-			prefix = "\x1b[" + h.colors.Key + ";1m"
+			prefix = env.ColorPrefixCode(h.colors.Key)
 		} else {
-			prefix = "\x1b[" + h.colors.Object + ";1m"
+			fmt.Println(h.colors.Object)
+			prefix = env.ColorPrefixCode(h.colors.Object)
 		}
-		postfix = "\x1b[0m"
+		postfix = env.ColorPostfixCode()
 	}
 
 	return fmt.Sprintf(

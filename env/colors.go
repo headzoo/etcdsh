@@ -7,6 +7,11 @@ import (
 	"strings"
 )
 
+const (
+	ColorEscapeStart = "\x1b[%sm"
+	ColorEscapeEnd   = "\x1b[0m"
+)
+
 // Holds information about system colors.
 type Colors struct {
 	ls_colors map[string]string
@@ -53,4 +58,14 @@ func (c *Colors) GetLSDefault(key, def string) (string, error) {
 	}
 
 	return value, nil
+}
+
+// PrefixCode returns the escape sequence to generate the given color.
+func ColorPrefixCode(color string) string {
+	return fmt.Sprintf(ColorEscapeStart, color)
+}
+
+// PostfixCode returns the escape sequence to return colors back to normal.
+func ColorPostfixCode() string {
+	return ColorEscapeEnd
 }
