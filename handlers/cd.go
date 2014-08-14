@@ -1,7 +1,5 @@
 package handlers
 
-import "github.com/headzoo/etcdsh/io"
-
 // CdHandler handles the "exit" command.
 type CdHandler struct {
 	controller *Controller
@@ -21,7 +19,7 @@ func (h *CdHandler) Command() string {
 }
 
 // Validate returns whether the user input is valid.
-func (h *CdHandler) Validate(i *io.Input) bool {
+func (h *CdHandler) Validate(i *Input) bool {
 	return i.Key != ""
 }
 
@@ -35,8 +33,8 @@ func (h *CdHandler) Description() string {
 	return "Changes the working directory"
 }
 
-// Handles the "skel" command.
-func (h *CdHandler) Handle(i *io.Input) (string, error) {
+// Handles the "cd" command.
+func (h *CdHandler) Handle(i *Input) (string, error) {
 	h.controller.ChangeWorkingDir(i.Key)
 	return "", nil
 }

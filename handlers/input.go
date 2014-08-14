@@ -1,4 +1,4 @@
-package io
+package handlers
 
 // Represents user input.
 type Input struct {
@@ -14,16 +14,16 @@ func New(cmd, key, value string) *Input {
 }
 
 func NewFromArray(parts []string) *Input {
-	plen := len(parts)
+	p_len := len(parts)
 	cmd, key, value := "", "", ""
 
-	if plen > 0 {
+	if p_len > 0 {
 		cmd = parts[0]
 	}
-	if plen > 1 {
+	if p_len > 1 {
 		key = parts[1]
 	}
-	if plen > 2 {
+	if p_len > 2 {
 		value = parts[2]
 	}
 

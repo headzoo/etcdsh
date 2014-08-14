@@ -10,7 +10,6 @@ import (
 
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/headzoo/etcdsh/config"
-	eio "github.com/headzoo/etcdsh/io"
 	"github.com/bobappleyard/readline"
 	"github.com/headzoo/etcdsh/parser"
 	"net/url"
@@ -26,8 +25,8 @@ type HandlerMap map[string]Handler
 // Handler types are called when a command is given by the user.
 type Handler interface {
 	Command() string
-	Handle(*eio.Input) (string, error)
-	Validate(*eio.Input) bool
+	Handle(*Input) (string, error)
+	Validate(*Input) bool
 	Syntax() string
 	Description() string
 }
@@ -111,7 +110,7 @@ func (c *Controller) Start() int {
 			parts := strings.SplitN(line, " ", 3)
 			if parts[0] != "" {
 				readline.AddHistory(line)
-				c.handleInput(eio.NewFromArray(parts))
+				c.handleInput(NewFromArray(parts))
 			}
 		}
 	}
@@ -176,7 +175,7 @@ func (c *Controller) hasHandler(id string) bool {
 }
 
 // Handles the user input.
-func (c *Controller) handleInput(i *eio.Input) {
+func (c *Controller) handleInput(i *Input) {
 	handler, ok := c.handlers[i.Cmd]
 	if !ok {
 		fmt.Fprintln(c.stderr, fmt.Sprintf("The command %s does not exist.", i.Cmd))

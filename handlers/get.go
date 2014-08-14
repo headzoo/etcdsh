@@ -1,7 +1,5 @@
 package handlers
 
-import "github.com/headzoo/etcdsh/io"
-
 // GetHandler handles the "exit" command.
 type GetHandler struct {
 	controller *Controller
@@ -21,7 +19,7 @@ func (h *GetHandler) Command() string {
 }
 
 // Validate returns whether the user input is valid.
-func (h *GetHandler) Validate(i *io.Input) bool {
+func (h *GetHandler) Validate(i *Input) bool {
 	return i.Key != ""
 }
 
@@ -35,8 +33,8 @@ func (h *GetHandler) Description() string {
 	return "Displays the value of the given key"
 }
 
-// Handles the "skel" command.
-func (h *GetHandler) Handle(i *io.Input) (string, error) {
+// Handles the "get" command.
+func (h *GetHandler) Handle(i *Input) (string, error) {
 	dir := h.controller.WorkingDir(i.Key)
 	resp, err := h.controller.Client().Get(dir, false, false)
 	if err != nil {

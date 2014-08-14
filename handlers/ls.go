@@ -9,7 +9,6 @@ import (
 
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/headzoo/etcdsh/env"
-	"github.com/headzoo/etcdsh/io"
 )
 
 const (
@@ -66,7 +65,7 @@ func (h *LsHandler) Syntax() string {
 }
 
 // Validate returns whether the user input is valid for this handler.
-func (h *LsHandler) Validate(i *io.Input) bool {
+func (h *LsHandler) Validate(i *Input) bool {
 	return true
 }
 
@@ -76,7 +75,7 @@ func (h *LsHandler) Description() string {
 }
 
 // Handles the "ls" command.
-func (h *LsHandler) Handle(i *io.Input) (string, error) {
+func (h *LsHandler) Handle(i *Input) (string, error) {
 	dir := h.controller.WorkingDir(i.Key)
 	resp, err := h.controller.Client().Get(dir, false, false)
 	if err != nil {

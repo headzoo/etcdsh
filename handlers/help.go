@@ -3,8 +3,6 @@ package handlers
 import (
 	"bytes"
 	"fmt"
-
-	"github.com/headzoo/etcdsh/io"
 )
 
 // HelpHandler handles the "exit" command.
@@ -26,7 +24,7 @@ func (h *HelpHandler) Command() string {
 }
 
 // Validate returns whether the user input is valid.
-func (h *HelpHandler) Validate(i *io.Input) bool {
+func (h *HelpHandler) Validate(i *Input) bool {
 	return true
 }
 
@@ -41,7 +39,7 @@ func (h *HelpHandler) Description() string {
 }
 
 // Handles the "ls" command.
-func (h *HelpHandler) Handle(i *io.Input) (string, error) {
+func (h *HelpHandler) Handle(i *Input) (string, error) {
 	handlers := h.controller.Handlers()
 	buffer := bytes.NewBufferString("Etcdsh - An interactive shell for the etcd server.\n")
 
