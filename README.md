@@ -1,7 +1,7 @@
 etcdsh v0.2
 ===========
 
-*This is still a work in progress, and right now only supports the commands cd, ls, get, and set.*
+*Aug 13th, 2014: This is still a work in progress, and right now only supports the commands cd, ls, get, and set.*
 
 A command line application that provides an interactive shell for the etcd server.
 
