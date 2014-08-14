@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"io"
@@ -34,12 +33,11 @@ type Handler interface {
 
 // Controller stores handlers and calls them.
 type Controller struct {
+	wdir                  string
 	handlers              HandlerMap
-	scanner               *bufio.Scanner
 	config                *config.Config
 	client                *etcd.Client
 	stdout, stderr, stdin *os.File
-	wdir                  string
 	prompter              *parser.Prompt
 }
 
@@ -51,7 +49,6 @@ func NewController(config *config.Config, client *etcd.Client, stdout, stderr, s
 	c.client = client
 	c.stdout, c.stderr, c.stdin = stdout, stderr, stdin
 	c.handlers = make(HandlerMap)
-	c.scanner = bufio.NewScanner(stdin)
 	
 	c.prompter = parser.NewPrompt()
 	c.prompter.AddFormatter('w', func() string {
