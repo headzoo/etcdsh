@@ -60,7 +60,7 @@ func (p *Prompt) AddFormatter(key rune, f Formatter) {
 func (p *Prompt) Parse(s string) (string, error) {
 	buffer := bytes.Buffer{}
 	escaped := false
-	
+
 	for _, ch := range s {
 		if ch == '\\' && !escaped {
 			escaped = true
@@ -76,7 +76,7 @@ func (p *Prompt) Parse(s string) (string, error) {
 			buffer.WriteRune(ch)
 		}
 	}
-	
+
 	return buffer.String(), nil
 }
 

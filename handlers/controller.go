@@ -7,7 +7,7 @@ import (
 	"path"
 	"strings"
 	"bytes"
-	
+
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/headzoo/etcdsh/config"
 	eio "github.com/headzoo/etcdsh/io"
@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	Version    = "0.2"
+	Version = "0.2"
 )
 
 // Represents a map of Handler instances
@@ -50,7 +50,7 @@ func NewController(conf *config.Config, client *etcd.Client, stdout, stderr, std
 	c.client = client
 	c.stdout, c.stderr, c.stdin = stdout, stderr, stdin
 	c.handlers = make(HandlerMap)
-	
+
 	c.prompter = parser.NewPrompt()
 	c.prompter.AddFormatter('w', func() string {
 			return c.wdir
@@ -69,24 +69,24 @@ func NewController(conf *config.Config, client *etcd.Client, stdout, stderr, std
 				return conf.Machine
 			}
 		})
-	
+
 	return c
 }
 
 // Starts the controller.
 func (c *Controller) Start() int {
 	c.welcome()
-	
+
 	prompt := ""
 	buffer := bytes.NewBufferString("")
-	
+
 	for {
 		if buffer.Len() == 0 {
 			prompt = c.ps1()
 		} else {
 			prompt = c.ps2()
 		}
-		
+
 		line, err := readline.String(prompt)
 		if err == io.EOF {
 			break
@@ -94,7 +94,7 @@ func (c *Controller) Start() int {
 		if err != nil {
 			panic(err)
 		}
-		
+
 		line = strings.TrimSpace(line)
 		if strings.ToLower(line) == "q" || strings.ToLower(line) == "exit" {
 			return 0
@@ -151,7 +151,7 @@ func (c *Controller) ChangeWorkingDir(wdir string) string {
 	if strings.HasPrefix(wdir, "/") {
 		c.wdir = wdir
 	} else {
-		c.wdir = c.WorkingDir("/" + wdir)
+		c.wdir = c.WorkingDir("/"+wdir)
 	}
 
 	return c.wdir
