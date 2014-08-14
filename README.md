@@ -116,8 +116,8 @@ Escape sequences not currently supported by etcdsh: \\D, \\V, \\!, \\#, \\j, \nn
 
 ### TODO
 * Write the command history to a file, eg `$HOME/.etcdsh_history`.
-* Auto complete needs to work recursivly.
-* Process command switches.
+* Find or write a replacement for the readline bindings (won't work on Windows).
+* Auto complete needs some polishing.
 * LS short output needs to be spaced better.
 * Handle pipes and redirection.
 
