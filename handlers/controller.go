@@ -158,17 +158,17 @@ func (c *Controller) ChangeWorkingDir(wdir string) string {
 	
 	count := c.getNodeCount(resp.Node, 0)
 	c.wdirKeys = make([]string, count)
-	c.addNodeToWDir(resp.Node, 0)
+	c.addNodeToWorkingDirKeys(resp.Node, 0)
 
 	return c.wdir
 }
 
 // addNodeToWDir adds the keys from all child nodes to the working dir keys.
-func (c *Controller) addNodeToWDir(node *etcd.Node, index int) int {
+func (c *Controller) addNodeToWorkingDirKeys(node *etcd.Node, index int) int {
 	for _, n := range node.Nodes {
 		c.wdirKeys[index] = n.Key
 		index++
-		index = c.addNodeToWDir(n, index)
+		index = c.addNodeToWorkingDirKeys(n, index)
 	}
 	
 	return index
