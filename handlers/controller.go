@@ -238,6 +238,6 @@ func (c *Controller) welcome() {
 	if c.hasHandler("help") {
 		fmt.Fprintln(c.stdout, "Type 'help' for a list of commands.")
 	}
-	fmt.Fprintln(c.stdout, "Type 'q' to quit.")
+	fmt.Fprintln(c.stdout, "Type 'exit' or 'q' to quit.")
 	fmt.Fprintln(c.stdout, "")
 }
