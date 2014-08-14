@@ -105,6 +105,12 @@ Example:
 export ETCDSH_PS1="\u@etcd:\w\$ "
 ```
 
+You can even embed color codes.
+
+```
+export ETCDSH_PS1="\e[36m\u@\h\e[0m:\e[32m\w\e[0m"
+```
+
 Escape sequences not currently supported by etcdsh: \\D, \\V, \\!, \\#, \\j, \nnn, \\[, and \\]. Additionally bash commands cannot be embedded in the prompt. For example you can't use `\u@$(hostname):`.
 
 
