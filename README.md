@@ -67,7 +67,7 @@ The following is the list of configuration options.
 * "ps1" The first custom prompt.
 * "ps2" The second custom prompt.
 
-When used at the command line, prefix the option with "-", eg `-machine`. When defined as an environment variable, prefix the option with "ETCDSH_", eg "ETCDSH_MACHINE".
+When used at the command line, prefix the option with "-", eg `-machine`. When defined as an environment variable, prefix the option with "ETCDSH_", eg `ETCDSH_MACHINE`.
 
 
 An example configuration file.
