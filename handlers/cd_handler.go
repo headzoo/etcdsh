@@ -7,11 +7,9 @@ type CdHandler struct {
 
 // NewCdHandler returns a new ExitHandler instance.
 func NewCdHandler(controller *Controller) *CdHandler {
-	h := &CdHandler{
+	return &CdHandler{
 		controller: controller,
 	}
-
-	return h
 }
 
 // Command returns the string typed by the user that triggers to handler.

@@ -9,11 +9,9 @@ type GetHandler struct {
 
 // NewGetHandler returns a new ExitHandler instance.
 func NewGetHandler(controller *Controller) *GetHandler {
-	h := &GetHandler{
+	return &GetHandler{
 		controller: controller,
 	}
-
-	return h
 }
 
 // Command returns the string typed by the user that triggers to handler.

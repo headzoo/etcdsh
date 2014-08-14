@@ -18,11 +18,9 @@ type SetHandler struct {
 
 // NewSetHandler returns a new SetHandler instance.
 func NewSetHandler(controller *Controller) *SetHandler {
-	h := &SetHandler{
+	return &SetHandler{
 		controller: controller,
 	}
-
-	return h
 }
 
 // Command returns the string typed by the user that triggers to handler.

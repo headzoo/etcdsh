@@ -12,11 +12,9 @@ type HelpHandler struct {
 
 // NewHelpHandler returns a new ExitHandler instance.
 func NewHelpHandler(controller *Controller) *HelpHandler {
-	h := &HelpHandler{
+	return &HelpHandler{
 		controller: controller,
 	}
-
-	return h
 }
 
 // Command returns the string typed by the user that triggers to handler.
