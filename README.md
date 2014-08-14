@@ -1,10 +1,18 @@
 etcdsh v0.2
 ===========
+A command line application that provides an interactive shell for the etcd server.
 
 *Aug 13th, 2014: This is still a work in progress, and right now only supports the commands cd, ls, get, and set.*
 
-A command line application that provides an interactive shell for the etcd server.
+* [Overview](#overview)
+* [Installation](#installation)
+* [Configuration](#configuration)
+* [Custom Prompt](#custom-prompt)
+* [TODO](#todo)
+* [Bugs](#bugs)
 
+
+### Overview
 Using etcdsh you can browse your etcd "filesystem" like an ordinary filesystem, using familar commands line "cd" and "ls". For example:
 
 
@@ -58,7 +66,6 @@ go get
 go install
 ```
 
-### Usage
 Use `etcdsh -help` for a list of command line arguments. Once in the shell type "help" for a list of commands.
 
 
@@ -89,7 +96,6 @@ An example configuration file.
 ```
 
 
-
 ### Custom Prompt
 The terminal prompt may be customized using the environmental variables ETCDSH_PS1 and ETCDSH_PS2. The prompt format is nearly identital to the format used by bash. See [How to: Change / Setup bash custom prompt (PS1)](http://www.cyberciti.biz/tips/howto-linux-unix-bash-shell-setup-prompt.html) for a complete list of escape codes.
 
@@ -101,10 +107,12 @@ export ETCDSH_PS1="\u@etcd:\w\$ "
 
 Escape sequences not currently supported by etcdsh: \\D, \\V, \\!, \\#, \\j, \nnn, \\[, and \\]. Additionally bash commands cannot be embedded in the prompt. For example you can't use `\u@$(hostname):`.
 
-### Bugs
-This was the first app I've written using [Go](http://golang.org/). The code is probably sloppy, and breaks some Go conventions. Use the [issue system](https://github.com/headzoo/etcdsh/issues) to report bugs and broken conventions.
-
 
 ### TODO
 * Write the command history to a file, eg `$HOME/.etcdsh_history`.
 * Auto complete needs to work recursivly.
+
+
+### Bugs
+This was the first app I've written using [Go](http://golang.org/). The code is probably sloppy, and breaks some Go conventions. Use the [issue system](https://github.com/headzoo/etcdsh/issues) to report bugs and broken conventions.
+
