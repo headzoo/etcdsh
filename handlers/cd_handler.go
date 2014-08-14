@@ -20,7 +20,7 @@ func (h *CdHandler) Command() string {
 
 // Validate returns whether the user input is valid.
 func (h *CdHandler) Validate(i *Input) bool {
-	return i.Key != ""
+	return i.Value != ""
 }
 
 // Syntax returns a string that demonstrates how to use the command.
@@ -35,6 +35,6 @@ func (h *CdHandler) Description() string {
 
 // Handles the "cd" command.
 func (h *CdHandler) Handle(i *Input) (string, error) {
-	h.controller.ChangeWorkingDir(i.Key)
+	h.controller.ChangeWorkingDir(i.Value)
 	return "", nil
 }
