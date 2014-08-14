@@ -16,12 +16,14 @@ import (
 
 // Main method.
 func main() {
-	config := config.New()
+	conf := config.New()
 	
 	help := flag.Bool("help", false, "Prints command line options and exit.")
 	version := flag.Bool("version", false, "Prints the etcdsh version and exit.")
-	flag.StringVar(&config.Machine, "machine", config.Machine, "Connect to this etcd server.")
-	flag.BoolVar(&config.Colors, "colors", config.Colors, "Use colors in display.")
+	flag.StringVar(&conf.Machine, "machine", conf.Machine, "Connect to this etcd server.")
+	flag.StringVar(&conf.PS1, "ps1", conf.PS1, "First prompt format")
+	flag.StringVar(&conf.PS2, "ps2", conf.PS2, "Second prompt format")
+	flag.BoolVar(&conf.Colors, "colors", conf.Colors, "Use colors in display.")
 	flag.Parse()
 	
 	if *help {
@@ -33,10 +35,10 @@ func main() {
 		os.Exit(0)
 	}
 
-	fmt.Printf("Connecting to %s\n", config.Machine)
-	client := etcd.NewClient([]string{config.Machine})
+	fmt.Printf("Connecting to %s\n", conf.Machine)
+	client := etcd.NewClient([]string{conf.Machine})
 
-	controller := handlers.NewController(config, client, os.Stdout, os.Stderr, os.Stdin)
+	controller := handlers.NewController(conf, client, os.Stdout, os.Stderr, os.Stdin)
 	controller.Add(handlers.NewLsHandler(controller))
 	controller.Add(handlers.NewSetHandler(controller))
 	controller.Add(handlers.NewHelpHandler(controller))
