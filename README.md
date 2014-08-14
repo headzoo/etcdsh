@@ -1,5 +1,8 @@
-etcdsh
-======
+etcdsh v0.2
+===========
+
+*This is still a work in progress, and right now only supports the commands cd, ls, get, and set.*
+
 A command line application that provides an interactive shell for the etcd server.
 
 Using etcdsh you can browse your etcd "filesystem" like an ordinary filesystem, using familar commands line "cd" and "ls". For example:
@@ -40,7 +43,13 @@ joe@etcd:/$ q
 ### Installation
 Go version 1.3 is required. See [this page](http://golang.org/doc/install) for Go installation instructions.
 
-With Go installed clone the repo and install using `go install`.
+The readline development libraries are required.
+
+```
+apt-get install libreadline-dev
+```
+
+Clone the repo and install using `go install`.
 
 ```
 git clone git@github.com:headzoo/etcdsh.git
