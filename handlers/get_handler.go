@@ -20,7 +20,7 @@ func (h *GetHandler) Command() string {
 
 // Validate returns whether the user input is valid.
 func (h *GetHandler) Validate(i *Input) bool {
-	return i.Value != ""
+	return len(i.Args) > 0
 }
 
 // Syntax returns a string that demonstrates how to use the command.
@@ -35,7 +35,7 @@ func (h *GetHandler) Description() string {
 
 // Handles the "get" command.
 func (h *GetHandler) Handle(i *Input) (string, error) {
-	dir := h.controller.WorkingDir(i.Value)
+	dir := h.controller.WorkingDir(i.Args[0])
 	resp, err := h.controller.Client().Get(dir, false, false)
 	if err != nil {
 		return "", err

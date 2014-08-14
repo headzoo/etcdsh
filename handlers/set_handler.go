@@ -1,7 +1,5 @@
 package handlers
 
-import "strings"
-
 // SetHandler handles the "ls" command.
 type SetHandler struct {
 	CommandHandler
@@ -22,8 +20,7 @@ func (h *SetHandler) Command() string {
 
 // Validate returns whether the user input is valid.
 func (h *SetHandler) Validate(i *Input) bool {
-	parts := strings.SplitN(i.Value, " ", 2)
-	return len(parts) == 2
+	return len(i.Args) > 1
 }
 
 // Syntax returns a string that demonstrates how to use the command.
@@ -38,8 +35,7 @@ func (h *SetHandler) Description() string {
 
 // Handles the "ls" command.
 func (h *SetHandler) Handle(i *Input) (string, error) {
-	parts := strings.SplitN(i.Value, " ", 2)
-	resp, err := h.controller.Client().Set(parts[0], parts[1], 0)
+	resp, err := h.controller.Client().Set(i.Args[0], i.Args[1], 0)
 	if err != nil {
 		return "", err
 	}

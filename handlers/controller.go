@@ -14,6 +14,7 @@ import (
 	"github.com/headzoo/etcdsh/config"
 	"github.com/bobappleyard/readline"
 	"github.com/headzoo/etcdsh/parser"
+	"github.com/flynn/go-shlex"
 )
 
 // Controller stores handlers and calls them.
@@ -95,12 +96,27 @@ func (c *Controller) Start() int {
 				line = buffer.String()
 				buffer.Reset()
 			}
-
-			parts := strings.SplitN(line, " ", 3)
+			
+			parts, err := shlex.Split(line)
+			if err != nil {
+				panic(err)
+			}
+			readline.AddHistory(line)
+			
+			in := NewInput(parts[0])
+			if len(parts) > 1 {
+				in.Args = parts[1:]
+			}
+			c.handleInput(in)
+			
+			/*
+			parts := strings.SplitN(line, " ", 2)
 			if parts[0] != "" {
 				readline.AddHistory(line)
-				c.handleInput(NewFromArray(parts))
+				
+				//c.handleInput(NewInputFromArray(parts))
 			}
+			*/
 		}
 	}
 

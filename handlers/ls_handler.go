@@ -9,6 +9,7 @@ import (
 
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/headzoo/etcdsh/env"
+	"flag"
 )
 
 const (
@@ -50,7 +51,7 @@ func NewLsHandler(controller *Controller) *LsHandler {
 	h := new(LsHandler)
 	h.controller = controller
 	h.setupColors()
-
+	
 	return h
 }
 
@@ -76,14 +77,29 @@ func (h *LsHandler) Description() string {
 
 // Handles the "ls" command.
 func (h *LsHandler) Handle(i *Input) (string, error) {
-	dir := h.controller.WorkingDir(i.Value)
-	resp, err := h.controller.Client().Get(dir, true, false)
+	flags := flag.NewFlagSet("ls_flagset", flag.ContinueOnError)
+	help := flags.Bool("h", false, "Show command help")
+	sort := flags.Bool("s", false, "Sort the results")
+	long := flags.Bool("l", false, "Use long list format")
+	if flags.Parse(i.Args) != nil {
+		return "", nil
+	}
+	if *help || len(flags.Args()) == 0 {
+		printCommandHelp(h, flags)
+		return "", nil
+	}
+	
+	args := flags.Args()
+	dir := h.controller.WorkingDir(args[0])
+	resp, err := h.controller.Client().Get(dir, *sort, false)
 	if err != nil {
 		return "", err
 	}
 
-	//return h.respToShortOutput(resp), nil
-	return h.respToLongOutput(resp), nil
+	if *long {
+		return h.respToLongOutput(resp), nil
+	}
+	return h.respToShortOutput(resp), nil
 }
 
 // respToLongOuput formats an etcd response for output in the long format.
@@ -141,9 +157,9 @@ func (h *LsHandler) formatNode(n *etcd.Node, w ColumnWidths) string {
 	postfix := ""
 	if h.use_colors {
 		if n.Dir {
-			prefix = "\x1b[" + h.colors.Key + ";1m"
+			prefix = "\x1b["+h.colors.Key+";1m"
 		} else {
-			prefix = "\x1b[" + h.colors.Object + ";1m"
+			prefix = "\x1b["+h.colors.Object+";1m"
 		}
 		postfix = "\x1b[0m"
 	}
@@ -220,3 +236,4 @@ func columnWidths(resp_node *etcd.Node) ColumnWidths {
 
 	return widths
 }
+
