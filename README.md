@@ -54,9 +54,23 @@ Use `etcdsh -help` for a list of command line arguments. Once in the shell type 
 
 
 ### Configuration
-Default configuration values are stored in `$HOME/.etcdsh`, although command line values override the values from `.etcdsh`.
+There are three ways to configure etcdsh:
 
-An example configuration.
+1. Using command line arguments.
+2. Using environment variables.
+3. Using a JSON file saved at `$HOME/.etcdsh`.
+
+The following is the list of configuration options.
+
+* "machine" The etcd server to connect to.
+* "colors" Whether to use colors in output. Only applicable to Linux. The [LS_COLORS](http://blog.twistedcode.org/2008/04/lscolors-explained.html) environment variable is used to determine which colors to use.
+* "ps1" The first custom prompt.
+* "ps2" The second custom prompt.
+
+When used at the command line, prefix the option with "-", eg `-machine`. When defined as an environment variable, prefix the option with "ETCDSH_", eg "ETCDSH_MACHINE".
+
+
+An example configuration file.
 
 ```
 {
@@ -65,8 +79,6 @@ An example configuration.
 }
 ```
 
-* "machine" The etcd server to connect to.
-* "colors" Whether to use colors in output. Only applicable to Linux. The [LS_COLORS](http://blog.twistedcode.org/2008/04/lscolors-explained.html) environment variable is used to determine which colors to use.
 
 
 ### Custom Prompt
