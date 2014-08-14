@@ -90,7 +90,7 @@ func (h *LsHandler) Handle(i *Input) (string, error) {
 	if opts == nil || err != nil {
 		return "", err
 	}
-
+	
 	dir := h.controller.WorkingDir(args[0])
 	resp, err := h.controller.Client().Get(dir, opts.Sorted, false)
 	if err != nil {
