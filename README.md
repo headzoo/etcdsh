@@ -20,9 +20,9 @@ Using etcdsh you can browse your etcd "filesystem" like an ordinary filesystem, 
 Connecting to http://127.0.0.1:4001
 Interactive etcd shell started.
 Type 'help' for a list of commands.
-Type 'q' to quit.
+Type 'exit' or 'q' to quit.
 
-joe@etcd:/$ ls
+joe@etcd:/$ ls -l
 total 4
 0 0   0  k: .
 0 0   0  k: ..
@@ -30,7 +30,7 @@ total 4
 1 1   0  k: apps
 
 joe@etcd:/$ cd apps
-joe@etcd:/apps$ ls
+joe@etcd:/apps$ ls -l
 total 4
  0  0 0  k: .
  0  0 0  k: ..
@@ -40,11 +40,11 @@ total 4
 joe@etcd:/apps$ get website
 http://example.com
 
-joe@etcd:/apps$ set website http://example.net
+joe@etcd:/apps$ set -t 300 website http://example.net
 http://example.net
 
 joe@etcd:/apps cd ..
-joe@etcd:/$ q
+joe@etcd:/$ exit
 ```
 
 
