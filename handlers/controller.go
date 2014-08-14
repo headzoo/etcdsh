@@ -124,7 +124,6 @@ func (c *Controller) Start() int {
 			}
 
 			parts, err := shlex.Split(line)
-			fmt.Printf("\n%q\n", parts)
 			if err != nil {
 				panic(err)
 			}
