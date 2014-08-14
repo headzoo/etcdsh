@@ -20,6 +20,7 @@ import (
 // Controller stores handlers and calls them.
 type Controller struct {
 	wdir                  string
+	wdirKeys			  []string
 	handlers              HandlerMap
 	config                *config.Config
 	client                *etcd.Client
@@ -30,10 +31,11 @@ type Controller struct {
 // Create a new Controller.
 func NewController(conf *config.Config, client *etcd.Client, stdout, stderr, stdin *os.File) *Controller {
 	c := new(Controller)
-	c.wdir = "/"
+	
 	c.config = conf
 	c.client = client
 	c.stdout, c.stderr, c.stdin = stdout, stderr, stdin
+	c.wdir = "/"
 	c.handlers = make(HandlerMap)
 	
 	c.prompter = parser.NewPrompt()
@@ -54,17 +56,19 @@ func NewController(conf *config.Config, client *etcd.Client, stdout, stderr, std
 				return conf.Machine
 			}
 		})
-
+	
 	return c
 }
 
 // Starts the controller.
 func (c *Controller) Start() int {
 	c.welcome()
+	c.ChangeWorkingDir("/")
 
-	prompt := ""
+	readline.Completer = c.filenameCompleter
 	buffer := bytes.NewBufferString("")
-
+	prompt := ""
+	
 	for {
 		if buffer.Len() == 0 {
 			prompt = c.ps1()
@@ -127,7 +131,7 @@ func (c *Controller) Handlers() HandlerMap {
 // WorkingDir returns the working directory. The value of a is appended to the value.
 func (c *Controller) WorkingDir(a string) string {
 	a = strings.Replace(a, "\n", "", -1)
-	wdir := c.wdir + a
+	wdir := c.wdir + "/" + a
 	return path.Clean(wdir)
 }
 
@@ -139,6 +143,16 @@ func (c *Controller) ChangeWorkingDir(wdir string) string {
 		c.wdir = c.WorkingDir("/"+wdir)
 	}
 
+	resp, err := c.client.Get(c.wdir, false, false)
+	if err != nil {
+		panic(err)
+	}
+	
+	c.wdirKeys = make([]string, len(resp.Node.Nodes))
+	for i, node := range resp.Node.Nodes {
+		c.wdirKeys[i] = node.Key
+	}
+	
 	return c.wdir
 }
 
@@ -146,12 +160,12 @@ func (c *Controller) ChangeWorkingDir(wdir string) string {
 func (c *Controller) ps1() string {
 	prompt, _ := c.prompter.Parse(c.config.PS1)
 	return prompt
-	//return fmt.Sprintf(c.config.PS1, os.Getenv("USER"), c.wdir)
 }
 
 // ps2 returns the second type of prompt.
 func (c *Controller) ps2() string {
-	return c.config.PS2
+	prompt, _ := c.prompter.Parse(c.config.PS2)
+	return prompt
 }
 
 // hasHandler returns whether a command handler has been added with the given id.
@@ -175,6 +189,20 @@ func (c *Controller) handleInput(i *Input) {
 			fmt.Fprintln(c.stderr, err)
 		}
 	}
+}
+
+// filenameCompleter is a callback function for the readline.Completer variable.
+func (c *Controller) filenameCompleter(query, ctx string) []string {
+	var keys []string
+	total := len(c.wdirKeys)
+	for i := 0; i < total; i++ {
+		base := path.Base(c.wdirKeys[i])
+		if strings.HasPrefix(base, query) {
+			keys = append(keys, base)
+		}
+	}
+
+	return keys
 }
 
 // Welcome displays a welcome message.
