@@ -29,7 +29,7 @@ type Prompt struct {
 
 // Creates and returns a new prompt parser instance.
 func NewPrompt() *Prompt {
-	p := new(Prompt)
+	p := &Prompt{}
 	p.formatters = make(FormatterMap)
 	p.formatters['\\'] = formatSlash
 	p.formatters['a'] = formatBell

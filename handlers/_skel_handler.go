@@ -2,13 +2,14 @@ package handlers
 
 // SkelHandler handles the "exit" command.
 type SkelHandler struct {
-	CommandHandler
+	controller *Controller
 }
 
 // NewSkelHandler returns a new ExitHandler instance.
 func NewSkelHandler(controller *Controller) *SkelHandler {
-	h := new(SkelHandler)
-	h.controller = controller
+	h := &SkelHandler{
+		controller: controller,
+	}
 
 	return h
 }

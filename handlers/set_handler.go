@@ -2,13 +2,14 @@ package handlers
 
 // SetHandler handles the "ls" command.
 type SetHandler struct {
-	CommandHandler
+	controller *Controller
 }
 
 // NewSetHandler returns a new SetHandler instance.
 func NewSetHandler(controller *Controller) *SetHandler {
-	h := new(SetHandler)
-	h.controller = controller
+	h := &SetHandler{
+		controller: controller,
+	}
 
 	return h
 }

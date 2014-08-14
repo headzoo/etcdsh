@@ -7,13 +7,14 @@ import (
 
 // HelpHandler handles the "exit" command.
 type HelpHandler struct {
-	CommandHandler
+	controller *Controller
 }
 
 // NewHelpHandler returns a new ExitHandler instance.
 func NewHelpHandler(controller *Controller) *HelpHandler {
-	h := new(HelpHandler)
-	h.controller = controller
+	h := &HelpHandler{
+		controller: controller,
+	}
 
 	return h
 }

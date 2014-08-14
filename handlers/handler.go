@@ -17,13 +17,6 @@ type Handler interface {
 // Represents a map of Handler instances
 type HandlerMap map[string]Handler
 
-// Base struct for other handlers.
-type CommandHandler struct {
-	Handler
-	controller *Controller
-	flags *flag.FlagSet
-}
-
 // printCommandHelp is used by handlers to display command help.
 func printCommandHelp(handler Handler, flags *flag.FlagSet) {
 	fmt.Println("SYNTAX")

@@ -2,13 +2,14 @@ package handlers
 
 // CdHandler handles the "exit" command.
 type CdHandler struct {
-	CommandHandler
+	controller *Controller
 }
 
 // NewCdHandler returns a new ExitHandler instance.
 func NewCdHandler(controller *Controller) *CdHandler {
-	h := new(CdHandler)
-	h.controller = controller
+	h := &CdHandler{
+		controller: controller,
+	}
 
 	return h
 }

@@ -8,12 +8,12 @@ type Input struct {
 
 // Creates a new Input type.
 func NewInput(cmd string) *Input {
-	i := Input{
+	i := &Input{
 		Cmd: cmd,
 		Args: []string{},
 	}
 	
-	return &i
+	return i
 }
 
 func (i *Input) Reset() {

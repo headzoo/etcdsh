@@ -49,15 +49,16 @@ type LsOptions struct {
 
 // LsHandler handles the "ls" command.
 type LsHandler struct {
-	CommandHandler
+	controller *Controller
 	colors     LsOutputColors
 	use_colors bool
 }
 
 // NewLsHandler creates a new LsHandler instance.
 func NewLsHandler(controller *Controller) *LsHandler {
-	h := new(LsHandler)
-	h.controller = controller
+	h := &LsHandler{
+		controller: controller,
+	}
 	h.setupColors()
 
 	return h

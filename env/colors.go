@@ -19,9 +19,7 @@ type Colors struct {
 
 // Creates and returns a new Colors instance.
 func NewColors() *Colors {
-	c := new(Colors)
-
-	return c
+	return &Colors{}
 }
 
 // GetLS returns a color value defined in the LS_COLORS environment variable.

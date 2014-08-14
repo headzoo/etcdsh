@@ -2,13 +2,14 @@ package handlers
 
 // GetHandler handles the "exit" command.
 type GetHandler struct {
-	CommandHandler
+	controller *Controller
 }
 
 // NewGetHandler returns a new ExitHandler instance.
 func NewGetHandler(controller *Controller) *GetHandler {
-	h := new(GetHandler)
-	h.controller = controller
+	h := &GetHandler{
+		controller: controller,
+	}
 
 	return h
 }

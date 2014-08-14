@@ -25,11 +25,12 @@ type Config struct {
 
 // Creates a new Config instance.
 func New() *Config {
-	c := new(Config)
-	c.Machine = getenvString("MACHINE", DefaultMachine)
-	c.Colors = getenvBool("COLORS", DefaultColors)
-	c.PS1 = getenvString("PS1", DefaultPS1)
-	c.PS2 = getenvString("PS2", DefaultPS2)
+	conf := &Config{
+		Machine: getenvString("MACHINE", DefaultMachine),
+		Colors: getenvBool("COLORS", DefaultColors),
+		PS1: getenvString("PS1", DefaultPS1),
+		PS2: getenvString("PS2", DefaultPS2),
+	}
 
 	usr, err := user.Current()
 	if err == nil {
@@ -37,14 +38,14 @@ func New() *Config {
 		configFile, err := os.Open(configName)
 		if err == nil {
 			decoder := json.NewDecoder(configFile)
-			err := decoder.Decode(c)
+			err := decoder.Decode(conf)
 			if err != nil {
 				panic(err)
 			}
 		}
 	}
 
-	return c
+	return conf
 }
 
 // getenv returns the value of an environment variable as a string or the default when the variable

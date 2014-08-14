@@ -30,15 +30,17 @@ type Controller struct {
 
 // Create a new Controller.
 func NewController(conf *config.Config, client *etcd.Client, stdout, stderr, stdin *os.File) *Controller {
-	c := new(Controller)
-
-	c.config = conf
-	c.client = client
-	c.stdout, c.stderr, c.stdin = stdout, stderr, stdin
-	c.wdir = "/"
-	c.handlers = make(HandlerMap)
-
-	c.prompter = parser.NewPrompt()
+	c := &Controller{
+		config: conf,
+		client: client,
+		stdout: stdout,
+		stdin: stdin,
+		stderr: stderr,
+		wdir: "/",
+		handlers: make(HandlerMap),
+		prompter: parser.NewPrompt(),
+	}
+	
 	c.prompter.AddFormatter('w', func() string {
 			return c.wdir
 		})
