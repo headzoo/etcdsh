@@ -105,12 +105,21 @@ Example:
 export ETCDSH_PS1="\u@etcd:\w\$ "
 ```
 
+You can even embed color codes.
+
+```
+export ETCDSH_PS1="\e[36m\u@\h\e[0m:\e[32m\w\e[0m"
+```
+
 Escape sequences not currently supported by etcdsh: \\D, \\V, \\!, \\#, \\j, \nnn, \\[, and \\]. Additionally bash commands cannot be embedded in the prompt. For example you can't use `\u@$(hostname):`.
 
 
 ### TODO
 * Write the command history to a file, eg `$HOME/.etcdsh_history`.
 * Auto complete needs to work recursivly.
+* Process command switches.
+* LS short output needs to be spaced better.
+* Handle pipes and redirection.
 
 
 ### Bugs
