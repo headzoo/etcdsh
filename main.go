@@ -11,14 +11,14 @@ import (
 
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/headzoo/etcdsh/config"
-	"github.com/headzoo/etcdsh/handlers"
 	"github.com/headzoo/etcdsh/etcdsh"
+	"github.com/headzoo/etcdsh/handlers"
 )
 
 // Main method.
 func main() {
 	conf := config.New()
-	
+
 	help := flag.Bool("help", false, "Prints command line options and exit.")
 	version := flag.Bool("version", false, "Prints the etcdsh version and exit.")
 	flag.StringVar(&conf.Machine, "machine", conf.Machine, "Connect to this etcd server.")
@@ -26,7 +26,7 @@ func main() {
 	flag.StringVar(&conf.PS2, "ps2", conf.PS2, "Second prompt format")
 	flag.BoolVar(&conf.Colors, "colors", conf.Colors, "Use colors in display.")
 	flag.Parse()
-	
+
 	if *help {
 		printHelp()
 		os.Exit(0)
