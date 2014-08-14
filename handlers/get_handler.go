@@ -2,7 +2,7 @@ package handlers
 
 // GetHandler handles the "exit" command.
 type GetHandler struct {
-	controller *Controller
+	CommandHandler
 }
 
 // NewGetHandler returns a new ExitHandler instance.

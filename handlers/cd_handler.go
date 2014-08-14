@@ -2,7 +2,7 @@ package handlers
 
 // CdHandler handles the "exit" command.
 type CdHandler struct {
-	controller *Controller
+	CommandHandler
 }
 
 // NewCdHandler returns a new ExitHandler instance.

@@ -7,7 +7,7 @@ import (
 
 // HelpHandler handles the "exit" command.
 type HelpHandler struct {
-	controller *Controller
+	CommandHandler
 }
 
 // NewHelpHandler returns a new ExitHandler instance.

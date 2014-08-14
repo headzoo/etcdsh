@@ -11,3 +11,9 @@ type Handler interface {
 
 // Represents a map of Handler instances
 type HandlerMap map[string]Handler
+
+// Base struct for other handlers.
+type CommandHandler struct {
+	Handler
+	controller *Controller
+}

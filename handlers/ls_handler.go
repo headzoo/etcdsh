@@ -40,7 +40,7 @@ type OutputColors struct {
 
 // LsHandler handles the "ls" command.
 type LsHandler struct {
-	controller *Controller
+	CommandHandler
 	colors     OutputColors
 	use_colors bool
 }

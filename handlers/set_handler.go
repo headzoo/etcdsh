@@ -2,7 +2,7 @@ package handlers
 
 // SetHandler handles the "ls" command.
 type SetHandler struct {
-	controller *Controller
+	CommandHandler
 }
 
 // NewSetHandler returns a new SetHandler instance.
