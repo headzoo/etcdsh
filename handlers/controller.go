@@ -21,7 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
 package handlers
 
 import (
@@ -35,7 +34,7 @@ import (
 
 	"github.com/bobappleyard/readline"
 	"github.com/coreos/go-etcd/etcd"
-	"github.com/flynn/go-shlex"
+	"github.com/headzoo/go-shlex/shlex"
 	"github.com/headzoo/etcdsh/config"
 	"github.com/headzoo/etcdsh/etcdsh"
 	"github.com/headzoo/etcdsh/parser"
